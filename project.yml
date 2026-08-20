@@ -1,0 +1,101 @@
+name: FetchBar
+options:
+  bundleIdPrefix: com.aliyar
+  deploymentTarget:
+    macOS: "14.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+  minimumXcodeGenVersion: "2.45.0"
+  defaultSourceDirectoryType: syncedFolder
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: YES
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: RCQFGHVGQJ
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.1.0"
+  configs:
+    release:
+      SWIFT_COMPILATION_MODE: wholemodule
+
+packages:
+  FetchBarKit:
+    path: Packages/FetchBarKit
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: "2.9.6"
+
+targets:
+  FetchBar:
+    type: application
+    platform: macOS
+    sources:
+      - path: FetchBar
+      - path: Supporting
+        type: group
+        buildPhase: none
+        optional: true
+    dependencies:
+      - package: FetchBarKit
+        product: GitEngine
+      - package: Sparkle
+    info:
+      path: Supporting/Info.plist
+      properties:
+        CFBundleDisplayName: FetchBar
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSUIElement: true
+        LSMinimumSystemVersion: "$(MACOSX_DEPLOYMENT_TARGET)"
+        LSApplicationCategoryType: public.app-category.developer-tools
+        NSPrincipalClass: NSApplication
+        NSHumanReadableCopyright: "© 2026 Aliyar. All rights reserved."
+        NSSupportsAutomaticTermination: false
+        NSSupportsSuddenTermination: false
+        ITSAppUsesNonExemptEncryption: false
+        NSDesktopFolderUsageDescription: "FetchBar reads git repositories you add from your Desktop."
+        NSDocumentsFolderUsageDescription: "FetchBar reads git repositories you add from your Documents."
+        NSDownloadsFolderUsageDescription: "FetchBar reads git repositories you add from your Downloads."
+        NSRemovableVolumesUsageDescription: "FetchBar reads git repositories you add on external drives."
+        NSNetworkVolumesUsageDescription: "FetchBar reads git repositories you add on network volumes."
+        # Sparkle auto-update: feed is attached to every GitHub release as an asset.
+        SUFeedURL: "https://github.com/aliyar/fetchbar/releases/latest/download/appcast.xml"
+        SUPublicEDKey: "p+uMYPdgR+8fYhuFBDXI5szEujxRNNDCcYhrQgphrW0="
+        SUEnableAutomaticChecks: true
+        SUScheduledCheckInterval: 86400
+    entitlements:
+      path: Supporting/FetchBar.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.aliyar.FetchBar
+        PRODUCT_NAME: FetchBar
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_PREVIEWS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
+    scheme:
+      testTargets:
+        - FetchBarTests
+        - package: FetchBarKit/GitEngineTests
+      gatherCoverageData: true
+
+  FetchBarTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: FetchBarTests
+    dependencies:
+      - target: FetchBar
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.aliyar.FetchBarTests
+        GENERATE_INFOPLIST_FILE: YES
