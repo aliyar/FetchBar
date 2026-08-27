@@ -52,6 +52,7 @@ struct AboutView: View {
             .frame(maxWidth: 360)
 
             HStack(spacing: 16) {
+                Link("Website", destination: URL(string: "https://fetchbar.greatpixels.com")!)
                 Link("GitHub", destination: URL(string: "https://github.com/aliyar/fetchbar")!)
                 Link("Report an Issue", destination: URL(string: "https://github.com/aliyar/fetchbar/issues")!)
             }
