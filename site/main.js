@@ -6,20 +6,26 @@
    loaded from the page's head. What it collects is on the privacy page. */
 (function () {
   "use strict";
+  /* Nothing is sent from a development machine. Serving the site locally used to count as
+     real visits: a third of the recorded users were localhost before this was added. */
+  var local = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "";
+  if (local) { return; }
+
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
   window.gtag("js", new Date());
-  window.gtag("config", "G-9FSWBSMGE6");
+  window.gtag("config", "G-LTZCPHH34W");
 
   /* A click is the nearest thing a static site has to a download. Every link to the file
      carries data-download with where it sits, so the buttons can be told apart; the version
-     and the file name come out of the address, so they are never a copy that goes stale. */
+     and the file name come out of the address, so they are never a copy that goes stale.
+     `app` rides along so the event says which app it belongs to on its own. */
   document.addEventListener("click", function (event) {
     var link = event.target instanceof Element ? event.target.closest("a[data-download]") : null;
     if (!link) { return; }
     var file = link.getAttribute("href").split("/").pop();
     var version = (link.getAttribute("href").match(/\/v([0-9]+\.[0-9]+\.[0-9]+)\//) || [])[1];
-    window.gtag("event", "download", { version: version, where: link.getAttribute("data-download"), file: file });
+    window.gtag("event", "download", { app: "fetchbar", version: version, where: link.getAttribute("data-download"), file: file });
   });
 }());
 
