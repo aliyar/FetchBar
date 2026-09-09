@@ -20,7 +20,7 @@ final class SystemTriggers {
             let online = path.status == .satisfied
             Task { @MainActor in self?.networkChanged(online: online) }
         }
-        monitor.start(queue: DispatchQueue(label: "com.aliyar.FetchBar.network"))
+        monitor.start(queue: DispatchQueue(label: "com.greatpixels.FetchBar.network"))
 
         let workspace = NSWorkspace.shared.notificationCenter
         observers.append(workspace.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in

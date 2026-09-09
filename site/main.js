@@ -38,13 +38,13 @@
   var say = function (text) { if (announce) announce.textContent = text; };
 
   /* ── 1. the menu bar demo ─────────────────────────────────────────────── */
-  var trigger = document.getElementById("rb-trigger");
-  var pop = document.getElementById("rb-panel");
+  var trigger = document.getElementById("fb-trigger");
+  var pop = document.getElementById("fb-panel");
 
   if (trigger && pop) {
     var bar = document.querySelector("[data-strip]");
-    var panel = pop.querySelector(".rb-panel");
-    var repos = [].slice.call(pop.querySelectorAll(".rb-repo"));
+    var panel = pop.querySelector(".fb-panel");
+    var repos = [].slice.call(pop.querySelectorAll(".fb-repo"));
     var statusLine = pop.querySelector("[data-status]");
     var initial = repos.map(function (el) {
       return {
@@ -145,7 +145,7 @@
     }
     function onKey(e) { if (e.key === "Escape") { closePop(true); } }
     function closeDropdowns() {
-      [].forEach.call(pop.querySelectorAll(".rb-dropdown"), function (d) { d.hidden = true; });
+      [].forEach.call(pop.querySelectorAll(".fb-dropdown"), function (d) { d.hidden = true; });
       [].forEach.call(pop.querySelectorAll('[data-action="open"]'), function (b) { b.setAttribute("aria-expanded", "false"); });
     }
 
@@ -175,9 +175,9 @@
 
     pop.addEventListener("click", function (e) {
       if (e.target.closest('a[href^="#"]')) { closePop(false); return; }
-      var row = e.target.closest(".rb-row");
+      var row = e.target.closest(".fb-row");
       if (row) {
-        var repo = row.closest(".rb-repo");
+        var repo = row.closest(".fb-repo");
         var open = repo.classList.toggle("is-open");
         row.setAttribute("aria-expanded", open ? "true" : "false");
         return;
@@ -185,7 +185,7 @@
       var btn = e.target.closest("button");
       if (!btn) return;
       var action = btn.getAttribute("data-action");
-      var host = btn.closest(".rb-repo");
+      var host = btn.closest(".fb-repo");
       var index = host ? repos.indexOf(host) : -1;
 
       if (action === "pull" && index > -1) {
@@ -220,9 +220,9 @@
         btn.title = paused ? "Checks paused" : "Pause checks";
         render();
         say(paused ? "Checks paused." : "Checks resumed.");
-      } else if (btn.closest(".rb-dropdown")) {
-        var menu = btn.closest(".rb-dropdown");
-        var menuButton = btn.closest(".rb-open").querySelector('[data-action="open"]');
+      } else if (btn.closest(".fb-dropdown")) {
+        var menu = btn.closest(".fb-dropdown");
+        var menuButton = btn.closest(".fb-open").querySelector('[data-action="open"]');
         var label = btn.querySelector("span").textContent;
         [].forEach.call(menu.querySelectorAll("button"), function (b) { b.classList.remove("is-current"); });
         btn.classList.add("is-current");

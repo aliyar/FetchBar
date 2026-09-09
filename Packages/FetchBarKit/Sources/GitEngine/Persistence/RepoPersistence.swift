@@ -5,7 +5,7 @@ import os
 /// `repos.json` holds user intent; `state.json` is a volatile cache and can be deleted safely.
 public actor RepoPersistence {
     public let directory: URL
-    private let logger = Logger(subsystem: "com.aliyar.FetchBar", category: "persistence")
+    private let logger = Logger(subsystem: "com.greatpixels.FetchBar", category: "persistence")
 
     struct RecordsFile: Codable {
         var schemaVersion = 1

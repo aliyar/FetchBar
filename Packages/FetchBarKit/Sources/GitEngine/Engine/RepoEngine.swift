@@ -66,7 +66,7 @@ public actor RepoEngine {
     private let baseEnvironment: [String: String]
     private let planner = SchedulePlanner()
     private let backoff = BackoffPolicy()
-    private let logger = Logger(subsystem: "com.aliyar.FetchBar", category: "engine")
+    private let logger = Logger(subsystem: "com.greatpixels.FetchBar", category: "engine")
 
     private var settings: EngineSettings
     private var records: [RepoRecord] = []

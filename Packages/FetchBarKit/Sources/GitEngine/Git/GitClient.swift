@@ -40,7 +40,7 @@ public struct GitClient: Sendable {
     public var environment: [String: String]
     /// Environment for network commands (may add `GIT_SSH_COMMAND`).
     public var networkEnvironment: [String: String]
-    public var logger = Logger(subsystem: "com.aliyar.FetchBar", category: "git")
+    public var logger = Logger(subsystem: "com.greatpixels.FetchBar", category: "git")
     /// Default timeout for local commands (tests shrink it).
     public var defaultTimeout: Duration = GitClient.localTimeout
 

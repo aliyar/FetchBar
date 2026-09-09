@@ -39,7 +39,7 @@ public struct CheckOutcome: Sendable {
 /// The per-repository check pipeline (plan §5.1). Stateless; everything it learns goes into the outcome.
 public struct RepoChecker: Sendable {
     public let git: GitClient
-    private let logger = Logger(subsystem: "com.aliyar.FetchBar", category: "engine")
+    private let logger = Logger(subsystem: "com.greatpixels.FetchBar", category: "engine")
 
     public init(git: GitClient) {
         self.git = git

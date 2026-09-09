@@ -162,7 +162,7 @@ struct SilenceLabelTests {
 @Suite("Dot limit setting")
 struct DotLimitSettingTests {
     func makeSettings() -> AppSettings {
-        AppSettings(defaults: UserDefaults(suiteName: "com.aliyar.FetchBar.dotlimit")!)
+        AppSettings(defaults: UserDefaults(suiteName: "com.greatpixels.FetchBar.dotlimit")!)
     }
 
     @Test func typedNumbersAreKeptInRange() {

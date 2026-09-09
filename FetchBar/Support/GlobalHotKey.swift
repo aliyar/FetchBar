@@ -42,7 +42,7 @@ final class GlobalHotKey {
 
     private var reference: EventHotKeyRef?
     private var handler: EventHandlerRef?
-    private static let signature = FourCharCode(0x52_42_48_4B) // 'RBHK'
+    private static let signature = FourCharCode(0x46_42_48_4B) // 'FBHK'
     private static var active: GlobalHotKey?
 
     init() {

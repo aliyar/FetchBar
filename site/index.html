@@ -82,7 +82,7 @@
       <a href="https://github.com/aliyar/FetchBar" target="_blank" rel="noopener">GitHub</a>
     </nav>
     <div class="macbar-status">
-      <button type="button" class="mb-item" id="rb-trigger" aria-expanded="false" aria-controls="rb-panel"
+      <button type="button" class="mb-item" id="fb-trigger" aria-expanded="false" aria-controls="fb-panel"
               aria-label="FetchBar: 2 of 5 repositories have new commits. Open the demo panel.">
         <svg class="mb-glyph" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-branch"/></svg>
         <span class="mb-dots" data-dots>
@@ -101,139 +101,139 @@
     </div>
   </div>
 
-  <div class="rb-pop" id="rb-panel" hidden>
-    <div class="rb-arrow" aria-hidden="true"></div>
-    <div class="rb-panel">
-      <div class="rb-head">
-        <div class="rb-head-text">
-          <p class="rb-status" data-status>2 of 5 repositories have new commits · 1 failed</p>
+  <div class="fb-pop" id="fb-panel" hidden>
+    <div class="fb-arrow" aria-hidden="true"></div>
+    <div class="fb-panel">
+      <div class="fb-head">
+        <div class="fb-head-text">
+          <p class="fb-status" data-status>2 of 5 repositories have new commits · 1 failed</p>
         </div>
-        <div class="rb-head-actions">
-          <button type="button" class="rb-icon" data-action="refresh" title="Check now" aria-label="Check all repositories now">
-            <svg class="rb-ico-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-refresh"/></svg>
-            <svg class="rb-ico-spin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg>
+        <div class="fb-head-actions">
+          <button type="button" class="fb-icon" data-action="refresh" title="Check now" aria-label="Check all repositories now">
+            <svg class="fb-ico-arrow" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-refresh"/></svg>
+            <svg class="fb-ico-spin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg>
           </button>
-          <button type="button" class="rb-icon" data-action="pause" title="Pause checks" aria-label="Pause checks" aria-pressed="false">
-            <svg class="rb-pause-bars" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-pause"/></svg>
-            <svg class="rb-pause-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-play"/></svg>
+          <button type="button" class="fb-icon" data-action="pause" title="Pause checks" aria-label="Pause checks" aria-pressed="false">
+            <svg class="fb-pause-bars" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-pause"/></svg>
+            <svg class="fb-pause-play" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-play"/></svg>
           </button>
-          <button type="button" class="rb-icon" data-action="silence" title="Silence notifications" aria-label="Silence notifications" aria-pressed="false">
-            <svg class="rb-bell-on" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-bell"/></svg>
-            <svg class="rb-bell-off" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-bell-off"/></svg>
+          <button type="button" class="fb-icon" data-action="silence" title="Silence notifications" aria-label="Silence notifications" aria-pressed="false">
+            <svg class="fb-bell-on" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-bell"/></svg>
+            <svg class="fb-bell-off" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-bell-off"/></svg>
           </button>
         </div>
       </div>
-      <ul class="rb-rows" data-rows>
-        <li class="rb-repo" data-repo="website" data-color="r1" data-behind="3" data-unseen="3">
-          <button type="button" class="rb-row" aria-expanded="false">
+      <ul class="fb-rows" data-rows>
+        <li class="fb-repo" data-repo="website" data-color="r1" data-behind="3" data-unseen="3">
+          <button type="button" class="fb-row" aria-expanded="false">
             <i class="dot dot--r1 is-new" data-rowdot aria-hidden="true"></i>
-            <span class="rb-name">website</span>
-            <span class="rb-branch">main</span>
-            <span class="rb-caps"><span class="cap cap--down" data-behind>↓3</span></span>
-            <svg class="rb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="rb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
+            <span class="fb-name">website</span>
+            <span class="fb-branch">main</span>
+            <span class="fb-caps"><span class="cap cap--down" data-behind>↓3</span></span>
+            <svg class="fb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="fb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
           </button>
-          <div class="rb-body">
-            <ol class="rb-commits">
-              <li><span class="rb-sha">83565de</span><span class="rb-subject">Fix flaky retry logic in the sync worker</span><span class="rb-meta">Mia Chen · 5 min. ago</span></li>
-              <li><span class="rb-sha">1d358b1</span><span class="rb-subject">Add dark mode to the settings page</span><span class="rb-meta">Tom Becker · 48 min. ago</span></li>
-              <li><span class="rb-sha">a081ba9</span><span class="rb-subject">Bump dependencies</span><span class="rb-meta">Renovate Bot · 3 hr. ago</span></li>
+          <div class="fb-body">
+            <ol class="fb-commits">
+              <li><span class="fb-sha">83565de</span><span class="fb-subject">Fix flaky retry logic in the sync worker</span><span class="fb-meta">Mia Chen · 5 min. ago</span></li>
+              <li><span class="fb-sha">1d358b1</span><span class="fb-subject">Add dark mode to the settings page</span><span class="fb-meta">Tom Becker · 48 min. ago</span></li>
+              <li><span class="fb-sha">a081ba9</span><span class="fb-subject">Bump dependencies</span><span class="fb-meta">Renovate Bot · 3 hr. ago</span></li>
             </ol>
-            <div class="rb-actions">
-              <button type="button" class="rb-btn" data-action="pull">Pull</button>
-              <button type="button" class="rb-btn" data-action="seen">Mark as seen</button>
-              <span class="rb-open">
-                <button type="button" class="rb-btn rb-btn--menu" data-action="open" aria-expanded="false"><svg class="rb-open-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-open"/></svg>Open in Finder<span class="rb-open-div" aria-hidden="true"></span><svg class="rb-caret" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-caret"/></svg></button>
-                <div class="rb-dropdown" hidden>
-                  <p class="rb-menu-head">Git clients</p>
-                  <ul class="rb-menu-list">
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>GitHub Desktop</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Sourcetree</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Fork</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Tower</span></button></li>
+            <div class="fb-actions">
+              <button type="button" class="fb-btn" data-action="pull">Pull</button>
+              <button type="button" class="fb-btn" data-action="seen">Mark as seen</button>
+              <span class="fb-open">
+                <button type="button" class="fb-btn fb-btn--menu" data-action="open" aria-expanded="false"><svg class="fb-open-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-open"/></svg>Open in Finder<span class="fb-open-div" aria-hidden="true"></span><svg class="fb-caret" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-caret"/></svg></button>
+                <div class="fb-dropdown" hidden>
+                  <p class="fb-menu-head">Git clients</p>
+                  <ul class="fb-menu-list">
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>GitHub Desktop</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Sourcetree</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Fork</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Tower</span></button></li>
                   </ul>
-                  <p class="rb-menu-head">Finder</p>
-                  <ul class="rb-menu-list">
-                    <li><button type="button" class="is-current"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Finder</span></button></li>
+                  <p class="fb-menu-head">Finder</p>
+                  <ul class="fb-menu-list">
+                    <li><button type="button" class="is-current"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Finder</span></button></li>
                   </ul>
-                  <p class="rb-menu-head">Terminals</p>
-                  <ul class="rb-menu-list">
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Terminal</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>iTerm</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Warp</span></button></li>
+                  <p class="fb-menu-head">Terminals</p>
+                  <ul class="fb-menu-list">
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Terminal</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>iTerm</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Warp</span></button></li>
                   </ul>
-                  <p class="rb-menu-head">Editors</p>
-                  <ul class="rb-menu-list">
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Visual Studio Code</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Cursor</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Xcode</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Sublime Text</span></button></li>
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Zed</span></button></li>
+                  <p class="fb-menu-head">Editors</p>
+                  <ul class="fb-menu-list">
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Visual Studio Code</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Cursor</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Xcode</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Sublime Text</span></button></li>
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Zed</span></button></li>
                   </ul>
-                  <ul class="rb-menu-list rb-menu-list--last">
-                    <li><button type="button"><svg class="rb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Repository page</span></button></li>
+                  <ul class="fb-menu-list fb-menu-list--last">
+                    <li><button type="button"><svg class="fb-menu-check" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-check"/></svg><span>Repository page</span></button></li>
                   </ul>
                 </div>
               </span>
             </div>
           </div>
         </li>
-        <li class="rb-repo" data-repo="api" data-color="r2" data-behind="1" data-ahead="2" data-unseen="1" data-dirty="1">
-          <button type="button" class="rb-row" aria-expanded="false">
+        <li class="fb-repo" data-repo="api" data-color="r2" data-behind="1" data-ahead="2" data-unseen="1" data-dirty="1">
+          <button type="button" class="fb-row" aria-expanded="false">
             <i class="dot dot--r2 is-new" data-rowdot aria-hidden="true"></i>
-            <span class="rb-name">api<i class="rb-dirty" title="Uncommitted changes"></i></span>
-            <span class="rb-branch">feature/rate-limits</span>
-            <span class="rb-caps"><span class="cap cap--down" data-behind>↓1</span><span class="cap cap--up">↑2</span></span>
-            <svg class="rb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="rb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
+            <span class="fb-name">api<i class="fb-dirty" title="Uncommitted changes"></i></span>
+            <span class="fb-branch">feature/rate-limits</span>
+            <span class="fb-caps"><span class="cap cap--down" data-behind>↓1</span><span class="cap cap--up">↑2</span></span>
+            <svg class="fb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="fb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
           </button>
-          <div class="rb-body">
-            <ol class="rb-commits">
-              <li><span class="rb-sha">4c1e77a</span><span class="rb-subject">Migrate CI to macOS 15 runners</span><span class="rb-meta">Sara Lind · 26 hr. ago</span></li>
+          <div class="fb-body">
+            <ol class="fb-commits">
+              <li><span class="fb-sha">4c1e77a</span><span class="fb-subject">Migrate CI to macOS 15 runners</span><span class="fb-meta">Sara Lind · 26 hr. ago</span></li>
             </ol>
-            <div class="rb-actions">
-              <button type="button" class="rb-btn" data-action="pull" disabled title="Working tree has changes">Pull</button>
-              <button type="button" class="rb-btn" data-action="seen">Mark as seen</button>
-              <span class="rb-note">Dirty working tree, so Pull is refused.</span>
+            <div class="fb-actions">
+              <button type="button" class="fb-btn" data-action="pull" disabled title="Working tree has changes">Pull</button>
+              <button type="button" class="fb-btn" data-action="seen">Mark as seen</button>
+              <span class="fb-note">Dirty working tree, so Pull is refused.</span>
             </div>
           </div>
         </li>
-        <li class="rb-repo" data-repo="design-system" data-color="r4" data-error="1">
-          <button type="button" class="rb-row" aria-expanded="false">
+        <li class="fb-repo" data-repo="design-system" data-color="r4" data-error="1">
+          <button type="button" class="fb-row" aria-expanded="false">
             <i class="dot dot--r4 is-error" data-rowdot aria-hidden="true"><b>!</b></i>
-            <span class="rb-name">design-system</span>
-            <span class="rb-branch">main <em class="rb-err">SSH authentication failed</em></span>
-            <span class="rb-caps"></span>
-            <svg class="rb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="rb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
+            <span class="fb-name">design-system</span>
+            <span class="fb-branch">main <em class="fb-err">SSH authentication failed</em></span>
+            <span class="fb-caps"></span>
+            <svg class="fb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="fb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
           </button>
-          <div class="rb-body">
-            <p class="rb-explain">Permission denied (publickey). FetchBar backs off instead of retrying, and tells you to add the key to your agent.</p>
+          <div class="fb-body">
+            <p class="fb-explain">Permission denied (publickey). FetchBar backs off instead of retrying, and tells you to add the key to your agent.</p>
           </div>
         </li>
-        <li class="rb-repo" data-repo="infra" data-color="r5">
-          <button type="button" class="rb-row" aria-expanded="false">
+        <li class="fb-repo" data-repo="infra" data-color="r5">
+          <button type="button" class="fb-row" aria-expanded="false">
             <i class="dot dot--r5" data-rowdot aria-hidden="true"></i>
-            <span class="rb-name">infra</span>
-            <span class="rb-branch">main</span>
-            <span class="rb-caps"></span>
-            <svg class="rb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="rb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
+            <span class="fb-name">infra</span>
+            <span class="fb-branch">main</span>
+            <span class="fb-caps"></span>
+            <svg class="fb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="fb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
           </button>
-          <div class="rb-body"><p class="rb-explain">Up to date with origin/main.</p></div>
+          <div class="fb-body"><p class="fb-explain">Up to date with origin/main.</p></div>
         </li>
-        <li class="rb-repo" data-repo="mobile-app" data-color="r3">
-          <button type="button" class="rb-row" aria-expanded="false">
+        <li class="fb-repo" data-repo="mobile-app" data-color="r3">
+          <button type="button" class="fb-row" aria-expanded="false">
             <i class="dot dot--r3" data-rowdot aria-hidden="true"></i>
-            <span class="rb-name">mobile-app</span>
-            <span class="rb-branch">main</span>
-            <span class="rb-caps"></span>
-            <svg class="rb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="rb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
+            <span class="fb-name">mobile-app</span>
+            <span class="fb-branch">main</span>
+            <span class="fb-caps"></span>
+            <svg class="fb-rowspin" viewBox="0 0 14 14" aria-hidden="true"><use href="#glyph-spinner"/></svg><svg class="fb-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-chevron"/></svg>
           </button>
-          <div class="rb-body"><p class="rb-explain">Up to date with origin/main.</p></div>
+          <div class="fb-body"><p class="fb-explain">Up to date with origin/main.</p></div>
         </li>
       </ul>
-      <div class="rb-foot">
-        <span class="rb-foot-btn"><svg class="rb-plus" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-plus"/></svg>Add Repository…</span>
-        <span class="rb-foot-r">
-          <a class="rb-foot-btn rb-foot-btn--icon" href="#settings-shot" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-gear"/></svg></a>
-          <span class="rb-foot-btn rb-foot-btn--icon" aria-label="Quit FetchBar"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-power"/></svg></span>
+      <div class="fb-foot">
+        <span class="fb-foot-btn"><svg class="fb-plus" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-plus"/></svg>Add Repository…</span>
+        <span class="fb-foot-r">
+          <a class="fb-foot-btn fb-foot-btn--icon" href="#settings-shot" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-gear"/></svg></a>
+          <span class="fb-foot-btn fb-foot-btn--icon" aria-label="Quit FetchBar"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-power"/></svg></span>
         </span>
       </div>
     </div>

@@ -61,7 +61,7 @@ open: generate       ## Open the project in Xcode
 	open $(APP).xcodeproj
 
 logs:                ## Follow FetchBar OSLog output
-	log stream --level debug --predicate 'subsystem == "com.aliyar.FetchBar"'
+	log stream --level debug --predicate 'subsystem == "com.greatpixels.FetchBar"'
 
 clean:               ## Remove build output and generated project files
 	rm -rf build dist $(APP).xcodeproj Supporting/Info.plist Supporting/FetchBar.entitlements $(PKG)/.build

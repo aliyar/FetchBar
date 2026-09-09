@@ -564,7 +564,7 @@ final class AppModel {
 
     static func preview(sample: Bool = true) -> AppModel {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("fetchbar-preview-\(UUID().uuidString)")
-        let model = AppModel(engine: RepoEngine(persistence: RepoPersistence(directory: directory)), settings: AppSettings(defaults: UserDefaults(suiteName: "com.aliyar.FetchBar.preview")!))
+        let model = AppModel(engine: RepoEngine(persistence: RepoPersistence(directory: directory)), settings: AppSettings(defaults: UserDefaults(suiteName: "com.greatpixels.FetchBar.preview")!))
         if sample {
             let data = SampleData.make()
             model.installPreviewData(records: data.records, snapshots: data.snapshots)
