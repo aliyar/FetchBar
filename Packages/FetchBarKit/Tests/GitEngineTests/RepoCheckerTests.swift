@@ -382,6 +382,46 @@ struct RepoCheckerTests {
         #expect(found.map(\.lastPathComponent) == ["one", "two"])
     }
 
+    /// The layout this app is developed in: a project folder per app, the clone inside it.
+    /// One level finds nothing there; two levels finds the clone.
+    @Test func depthReachesACloneInsideAProjectFolder() async throws {
+        let fx = try await GitFixture()
+        let remote = try await fx.makeRemote()
+        let folder = fx.directory("Apps")
+        try FileManager.default.createDirectory(at: folder.appendingPathComponent("fetchbar/notes"), withIntermediateDirectories: true)
+        _ = try await fx.clone(remote, as: "Apps/fetchbar/FetchBar")
+
+        #expect(RepoChecker.discoverRepositories(in: folder, maxDepth: 1).isEmpty)
+        #expect(RepoChecker.discoverRepositories(in: folder, maxDepth: 2).map(\.lastPathComponent) == ["FetchBar"])
+    }
+
+    /// A repository is taken whole: what lives inside it is its own business, so a nested
+    /// clone is never added behind its parent's back and a deep tree is never walked.
+    @Test func discoveryStopsAtARepositoryRatherThanDescendingIntoIt() async throws {
+        let fx = try await GitFixture()
+        let remote = try await fx.makeRemote()
+        let folder = fx.directory("Outer")
+        let parent = try await fx.clone(remote, as: "Outer/parent")
+        _ = try await fx.clone(remote, as: "Outer/parent/nested")
+        #expect(FileManager.default.fileExists(atPath: parent.appendingPathComponent("nested/.git").path))
+
+        let found = RepoChecker.discoverRepositories(in: folder, maxDepth: 4)
+        #expect(found.map(\.lastPathComponent) == ["parent"])
+    }
+
+    /// A dependency folder outside any repository would otherwise cost a walk of everything
+    /// in it, and never holds a clone worth adding.
+    @Test func discoverySkipsDependencyDirectories() async throws {
+        let fx = try await GitFixture()
+        let remote = try await fx.makeRemote()
+        let folder = fx.directory("Loose")
+        _ = try await fx.clone(remote, as: "Loose/node_modules/some-package")
+        _ = try await fx.clone(remote, as: "Loose/kept/app")
+
+        let found = RepoChecker.discoverRepositories(in: folder, maxDepth: 3)
+        #expect(found.map(\.lastPathComponent) == ["app"])
+    }
+
     @Test func shallowCloneIsFlagged() async throws {
         let fx = try await GitFixture()
         let remote = try await fx.makeRemote()

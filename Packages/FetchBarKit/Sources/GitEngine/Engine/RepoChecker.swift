@@ -59,15 +59,41 @@ public struct RepoChecker: Sendable {
         return try RevParseParser.parseValidation(out.stdoutText)
     }
 
-    /// Directories directly inside `folder` that contain a `.git` entry (file or directory).
-    public static func discoverRepositories(in folder: URL, fileManager: FileManager = .default) -> [URL] {
-        guard let children = try? fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
-            return []
+    /// How deep `discoverRepositories` may look below a folder.
+    public static let discoveryDepthRange = 1...4
+
+    /// Directory names never worth descending into. Every one of them normally lives inside a
+    /// repository, where the walk stops anyway; this is for the case where one does not, and a
+    /// single unlucky folder would otherwise cost a walk of tens of thousands of directories.
+    private static let skippedDirectories: Set<String> = [
+        "node_modules", "Pods", "Carthage", "vendor", "target", "DerivedData", "Library", ".build",
+    ]
+
+    /// Repositories below `folder`, looking at most `maxDepth` levels down: 1 is the folder's own
+    /// children, 2 also their children, and so on.
+    ///
+    /// A directory that is itself a repository is taken and **not** descended into. That is what
+    /// keeps the walk cheap (a repository's `node_modules` is never opened) and what keeps
+    /// submodules and nested worktrees from being added behind their parent's back.
+    public static func discoverRepositories(in folder: URL, maxDepth: Int = 1, fileManager: FileManager = .default) -> [URL] {
+        var found: [URL] = []
+        walk(folder, remaining: max(1, maxDepth), fileManager: fileManager, into: &found)
+        return found.sorted { $0.path.localizedCaseInsensitiveCompare($1.path) == .orderedAscending }
+    }
+
+    private static func walk(_ folder: URL, remaining: Int, fileManager: FileManager, into found: inout [URL]) {
+        guard remaining > 0,
+              let children = try? fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
+        else { return }
+        for child in children {
+            guard (try? child.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true,
+                  !skippedDirectories.contains(child.lastPathComponent) else { continue }
+            if fileManager.fileExists(atPath: child.appendingPathComponent(".git").path) {
+                found.append(child)
+            } else {
+                walk(child, remaining: remaining - 1, fileManager: fileManager, into: &found)
+            }
         }
-        return children
-            .filter { (try? $0.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true }
-            .filter { fileManager.fileExists(atPath: $0.appendingPathComponent(".git").path) }
-            .sorted { $0.lastPathComponent.localizedCaseInsensitiveCompare($1.lastPathComponent) == .orderedAscending }
     }
 
     // MARK: Check

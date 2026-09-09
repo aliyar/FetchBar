@@ -376,7 +376,7 @@ final class AppModel {
                 added += 1
             } catch let error as EngineError {
                 if case .notARepository = error {
-                    let found = await engine.discoverRepositories(in: url)
+                    let found = await engine.discoverRepositories(in: url, maxDepth: settings.watchedFolderDepth)
                     if !found.isEmpty {
                         pendingDiscovery = DiscoveryProposal(folder: url, repositories: found)
                         continue
@@ -413,7 +413,7 @@ final class AppModel {
         for folder in settings.watchedFolders {
             let url = URL(fileURLWithPath: folder, isDirectory: true)
             guard FileManager.default.fileExists(atPath: url.path) else { continue }
-            for candidate in await engine.discoverRepositories(in: url) {
+            for candidate in await engine.discoverRepositories(in: url, maxDepth: settings.watchedFolderDepth) {
                 guard !records.contains(where: { $0.path == candidate.path }) else { continue }
                 // `add` refuses duplicates and non-repositories on its own; a failure here
                 // just means this folder is not one we can watch.

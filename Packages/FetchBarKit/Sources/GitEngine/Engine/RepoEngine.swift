@@ -393,8 +393,8 @@ public actor RepoEngine {
         return record
     }
 
-    public func discoverRepositories(in folder: URL) -> [URL] {
-        RepoChecker.discoverRepositories(in: folder)
+    public func discoverRepositories(in folder: URL, maxDepth: Int = 1) -> [URL] {
+        RepoChecker.discoverRepositories(in: folder, maxDepth: maxDepth)
     }
 
     public func remove(_ id: RepoID) {

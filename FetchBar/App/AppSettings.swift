@@ -24,6 +24,9 @@ final class AppSettings {
     var refreshOnPanelOpen: Bool { didSet { set(refreshOnPanelOpen, "refreshOnPanelOpen") } }
     /// Folders scanned for clones that are not on the list yet.
     var watchedFolders: [String] { didSet { set(watchedFolders, "watchedFolders") } }
+    /// How many folder levels below a watched folder to look. 2 by default, because a clone
+    /// usually sits inside a project folder rather than loose in the folder you watch.
+    var watchedFolderDepth: Int { didSet { set(watchedFolderDepth, "watchedFolderDepth") } }
     var markSeenOnExpand: Bool { didSet { set(markSeenOnExpand, "markSeenOnExpand") } }
     var defaultOpenAppBundleID: String { didSet { set(defaultOpenAppBundleID, "defaultOpenAppBundleID") } }
     var customOpenAppBundleIDs: [String] { didSet { set(customOpenAppBundleIDs, "customOpenAppBundleIDs") } }
@@ -74,6 +77,7 @@ final class AppSettings {
         unpushedReminderHours = defaults.object(forKey: "unpushedReminderHours") as? Int ?? 24
         refreshOnPanelOpen = defaults.object(forKey: "refreshOnPanelOpen") as? Bool ?? true
         watchedFolders = defaults.stringArray(forKey: "watchedFolders") ?? []
+        watchedFolderDepth = defaults.object(forKey: "watchedFolderDepth") as? Int ?? 2
         markSeenOnExpand = defaults.object(forKey: "markSeenOnExpand") as? Bool ?? false
         defaultOpenAppBundleID = defaults.string(forKey: "defaultOpenAppBundleID") ?? ExternalApp.finder.id
         customOpenAppBundleIDs = defaults.stringArray(forKey: "customOpenAppBundleIDs") ?? []

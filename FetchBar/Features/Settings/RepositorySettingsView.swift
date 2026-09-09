@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import GitEngine
 
 struct RepositorySettingsView: View {
     @Environment(AppModel.self) private var model
@@ -59,10 +60,24 @@ struct RepositorySettingsView: View {
                 Text("A folder that holds your clones")
                     .foregroundStyle(.secondary)
             }
+            Picker("Look this deep", selection: $settings.watchedFolderDepth) {
+                ForEach(RepoChecker.discoveryDepthRange, id: \.self) { depth in
+                    Text(Self.depthLabel(depth)).tag(depth)
+                }
+            }
         } header: {
             Text("Watched Folders")
         } footer: {
-            Footnote("Clones added to a watched folder show up in FetchBar on their own. Nothing is removed for you.")
+            Footnote("Clones added to a watched folder show up in FetchBar on their own. Nothing is removed for you. Two levels finds a clone that sits inside a project folder of its own; FetchBar never looks inside a repository it has already found, so a clone's own dependencies cost nothing.")
+        }
+    }
+
+    /// "1 level" reads as nothing at all; say what each depth actually reaches.
+    static func depthLabel(_ depth: Int) -> String {
+        switch depth {
+        case 1: "1 level (the folder itself)"
+        case 2: "2 levels (project folders)"
+        default: "\(depth) levels"
         }
     }
 
