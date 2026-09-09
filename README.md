@@ -195,4 +195,4 @@ Updates are delivered by [Sparkle](https://sparkle-project.org). Everything else
 
 ## License
 
-[MIT](LICENSE) © 2026 Aliyar
+[MIT](LICENSE)
