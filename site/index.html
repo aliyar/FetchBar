@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FetchBar — see which repos have new commits, from the menu bar</title>
+<title>FetchBar: see which repos have new commits, from the menu bar</title>
 <meta name="description" content="FetchBar watches your local git repositories and puts one colored dot per repo in the macOS menu bar. Filled means the remote is ahead. Free and open source.">
 <link rel="canonical" href="https://fetchbar.greatpixels.com/">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FetchBar">
 <meta property="og:url" content="https://fetchbar.greatpixels.com/">
-<meta property="og:title" content="FetchBar — know which repositories have new commits">
+<meta property="og:title" content="FetchBar: know which repositories have new commits">
 <meta property="og:description" content="A macOS menu bar app that watches your local git repositories and lights up when the remote is ahead of you. Free and open source.">
 <meta property="og:image" content="https://fetchbar.greatpixels.com/assets/og.jpg">
 <meta property="og:image:secure_url" content="https://fetchbar.greatpixels.com/assets/og.jpg">
@@ -46,7 +46,6 @@
   "downloadUrl": "https://github.com/aliyar/FetchBar/releases/latest",
   "installUrl": "https://github.com/aliyar/FetchBar/releases/latest",
   "softwareRequirements": "macOS 14.0 or later, Apple Silicon or Intel, git",
-  "fileSize": "3.9 MB",
   "screenshot": "https://fetchbar.greatpixels.com/assets/panel-light.png",
   "featureList": [
     "One colored dot per repository in the menu bar",
@@ -70,7 +69,7 @@
 
 <!-- ── the menu bar and the demo panel: a hand-written mirror of
      FetchBar/Features/Panel/PanelHeader.swift + PanelFooter.swift.
-     Reference render: docs/screenshots/panel-*.png — compare after any panel change. ── -->
+     Reference render: docs/screenshots/panel-*.png, compare after any panel change. ── -->
 <div class="macbar" data-strip>
   <div class="macbar-in">
     <nav class="macbar-menus" aria-label="Sections">
@@ -231,10 +230,10 @@
         </li>
       </ul>
       <div class="rb-foot">
-        <span class="rb-foot-l"><svg class="rb-plus" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-plus"/></svg>Add Repository…</span>
+        <span class="rb-foot-btn"><svg class="rb-plus" viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-plus"/></svg>Add Repository…</span>
         <span class="rb-foot-r">
-          <a class="rb-foot-link" href="#settings-shot">Settings</a>
-          <span class="rb-quit">Quit</span>
+          <a class="rb-foot-btn rb-foot-btn--icon" href="#settings-shot" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-gear"/></svg></a>
+          <span class="rb-foot-btn rb-foot-btn--icon" aria-label="Quit FetchBar"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#glyph-power"/></svg></span>
         </span>
       </div>
     </div>
@@ -266,15 +265,15 @@
         <p class="glance-cap"><b>2 of 5</b> repositories have new commits<span class="js-only"> · click the bar to open it</span></p>
       </div>
 
-      <h1>Know which repositories have new commits — without clicking.</h1>
+      <h1>Know which repositories have new commits, without clicking.</h1>
       <p class="lead">FetchBar watches your local clones and puts one colored dot per repository in the menu bar. Filled means the remote is ahead of you. Click to read the incoming commits and fast-forward, without opening a terminal.</p>
 
       <div class="cta">
-        <a class="btn btn--lg" data-download="hero" href="https://github.com/aliyar/FetchBar/releases/download/v0.4.1/FetchBar-0.4.1.zip">Download for macOS</a>
+        <a class="btn btn--lg" data-download="hero" href="https://github.com/aliyar/FetchBar/releases/download/v0.4.1/FetchBar-0.4.1.dmg">Download for macOS</a>
         <a class="btn btn--ghost btn--lg" href="https://github.com/aliyar/FetchBar" target="_blank" rel="noopener">Source on GitHub</a>
       </div>
       <ul class="req" aria-label="Requirements">
-        <li>0.4.1</li><li>3.9 MB</li><li>macOS 14 or later</li><li>Apple Silicon and Intel</li><li>MIT</li>
+        <li>0.4.1</li><li>macOS 14 or later</li><li>Apple Silicon and Intel</li><li>MIT</li>
       </ul>
       </div>
 
@@ -311,7 +310,7 @@
       </dl>
 
       <h3>Or don’t use dots at all.</h3>
-      <p class="prose">Three menu bar styles, switchable in Settings with a live preview. <b>Dots</b> gives every repository its own; <b>Count</b> collapses everything into one number, repositories or commits, whichever you prefer; <b>Icon only</b> shows the glyph with a small accent dot when something is new. Each repository gets a dot up to a limit you choose — eight to begin with — ordered the way the panel is, so the ones with news come first; whatever does not fit is counted as a <span class="mono">+N</span>.</p>
+      <p class="prose">Three menu bar styles, switchable in Settings with a live preview. <b>Dots</b> gives every repository its own; <b>Count</b> collapses everything into one number, repositories or commits, whichever you prefer; <b>Icon only</b> shows the glyph with a small accent dot when something is new. Each repository gets a dot up to a limit you choose, eight to begin with, ordered the way the panel is, so the ones with news come first; whatever does not fit is counted as a <span class="mono">+N</span>.</p>
 
       <div class="styles">
         <div class="styles-row">
@@ -373,24 +372,24 @@
       <div class="row">
         <div class="row-text">
           <h3>Set it once and forget the app exists</h3>
-          <p class="prose">Settings is six small tabs rather than one long list: check interval, launch at login, theme and the panel shortcut in General; new-commit and unpushed-commit notifications under Notifications; the default <b>Open in</b> application and the folders to watch for new clones under Repositories; and the menu bar style with a live preview of your own repositories. Advanced holds the parts you touch once: which <span class="mono">git</span> binary to use, extra <span class="mono">PATH</span> entries so your credential helper is found, the fetch timeout, how many checks run at a time, and whether to probe with <span class="mono">ls-remote</span> before fetching.</p>
+          <p class="prose">Settings is a sidebar of small panes, laid out the way System Settings is, rather than one long list. General has the check interval, launch at login and updates; Appearance the theme and how the panel opens; Menu Bar the style, with a live preview. Repositories holds the default <b>Open in</b> application and the folders to watch for new clones, Notifications the new-commit and unpushed-commit reminders. Advanced keeps the parts you touch once: which <span class="mono">git</span> binary to use, extra <span class="mono">PATH</span> entries so your credential helper is found, the fetch timeout, how many checks run at a time, and whether to probe with <span class="mono">ls-remote</span> before fetching.</p>
         </div>
         <figure class="row-media shot" id="settings-shot">
           <picture>
             <source media="(prefers-color-scheme: dark)" srcset="/assets/settings-dark.webp" type="image/webp">
             <source media="(prefers-color-scheme: dark)" srcset="/assets/settings-dark.png">
             <source srcset="/assets/settings-light.webp" type="image/webp">
-            <img src="/assets/settings-light.png" width="652" height="461" loading="lazy" decoding="async"
-                 alt="FetchBar Settings on the General tab, with tabs for Notifications, Repositories, Menu Bar, Advanced and About: check interval, launch at login, theme, and the panel shortcut.">
+            <img src="/assets/settings-light.png" width="812" height="572" loading="lazy" decoding="async"
+                 alt="FetchBar Settings on the General pane, with a sidebar listing Appearance, Menu Bar, Repositories, Notifications, Advanced, Support and About: check interval, launch at login and the update controls.">
           </picture>
         </figure>
       </div>
 
-      <p class="beat"><b>Open in</b> sends a repository straight to wherever you work on it — Finder, Terminal, iTerm, Ghostty, VS&nbsp;Code, Cursor, Zed, Xcode, Fork, Tower — offering the ones you actually have installed, and anything else you add yourself. Each repository remembers what you opened it with last, so the button is already right the next time.</p>
+      <p class="beat"><b>Open in</b> sends a repository straight to wherever you work on it: Finder, Terminal, iTerm, Ghostty, VS&nbsp;Code, Cursor, Zed, Xcode, Fork, Tower. It offers the ones you actually have installed, and anything else you add yourself. Each repository remembers what you opened it with last, so the button is already right the next time.</p>
 
-      <p class="beat">The same menu goes the other way too, out to the web: the repository page, its pull requests, issues, CI runs, branches, tags and releases. Every one of those addresses is worked out from the remote you already have, so nothing is connected, no account is linked and no token is stored anywhere. When commits are waiting, <b>View 3 New Commits</b> opens the compare view for exactly the three FetchBar is telling you about; on a branch you have already pushed, <b>New Pull Request</b> opens the form. GitHub, GitLab, Bitbucket, Gitea and Azure DevOps are understood — and a page a forge does not have is left out rather than guessed at.</p>
+      <p class="beat">The same menu goes the other way too, out to the web: the repository page, its pull requests, issues, CI runs, branches, tags and releases. Every one of those addresses is worked out from the remote you already have, so nothing is connected, no account is linked and no token is stored anywhere. When commits are waiting, <b>View 3 New Commits</b> opens the compare view for exactly the three FetchBar is telling you about; on a branch you have already pushed, <b>New Pull Request</b> opens the form. GitHub, GitLab, Bitbucket, Gitea and Azure DevOps are understood, and a page a forge does not have is left out rather than guessed at.</p>
 
-      <p class="beat">When something lands, you get one notification with <b>Open</b> and <b>Pull</b> on it, and FetchBar never notifies you twice about the same commits. It also reminds you about your own commits: a branch that has sat ahead of its remote for a day gets a nudge, because forgotten local work costs more than a missed pull. Silence any of it for an hour, for the evening, or one repository at a time — a timed silence lifts itself.</p>
+      <p class="beat">When something lands, you get one notification with <b>Open</b> and <b>Pull</b> on it, and FetchBar never notifies you twice about the same commits. It also reminds you about your own commits: a branch that has sat ahead of its remote for a day gets a nudge, because forgotten local work costs more than a missed pull. Silence any of it for an hour, for the evening, or one repository at a time. A timed silence lifts itself.</p>
     </div>
   </section>
 
@@ -437,17 +436,24 @@
   <!-- ── install ──────────────────────────────────────────────────────── -->
   <section id="install" class="band" data-node="5">
     <div class="col">
-      <h2>Three steps and it is in your menu bar.</h2>
+      <h2>Two steps and it is in your menu bar.</h2>
 
       <div class="dl">
-        <a class="btn btn--lg" data-download="end" href="https://github.com/aliyar/FetchBar/releases/download/v0.4.1/FetchBar-0.4.1.zip">Download FetchBar</a>
-        <p class="dl-meta">3.9 MB · Universal (Apple Silicon and Intel) · macOS 14 or later</p>
-        <p class="dl-sha">SHA-256 <span class="mono">06d31ac410945c75e7759aa958b47d1fbb61c9acae329a42570d73ae515464eb</span></p>
+        <a class="btn btn--lg" data-download="end" href="https://github.com/aliyar/FetchBar/releases/download/v0.4.1/FetchBar-0.4.1.dmg">Download FetchBar</a>
+        <p class="dl-meta">Universal (Apple Silicon and Intel) · macOS 14 or later</p>
       </div>
 
+      <figure class="dmg" aria-label="The disk image window: drag FetchBar onto the Applications folder">
+        <img class="dmg-app" src="/icon.svg" width="64" height="64" alt="" loading="lazy" decoding="async">
+        <svg class="dmg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="dmg-folder">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 18a4 4 0 0 1 4-4h14l5 5h25a4 4 0 0 1 4 4v27a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4Z" fill="#6FA8F0"/><path d="M6 26h52v24a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4Z" fill="#8FC2FA"/></svg>
+          Applications
+        </span>
+      </figure>
+
       <ol class="steps">
-        <li><b>Download and unzip.</b> Double-clicking the <span class="mono">.zip</span> is enough.</li>
-        <li><b>Drag FetchBar.app into Applications and open it.</b> FetchBar lives in the menu bar, so there is no Dock icon.</li>
+        <li><b>Open the disk image and drag FetchBar into Applications.</b> The build is signed with a Developer ID and notarized by Apple, so macOS opens it without a warning. FetchBar lives in the menu bar, so there is no Dock icon.</li>
         <li><b>Click the branch icon in your menu bar.</b> Add your first repository, or drop a folder onto the panel. Drop a folder that <i>contains</i> repositories and it adds all of them.</li>
       </ol>
 
@@ -473,7 +479,7 @@
         </details>
         <details>
           <summary>How many repositories can it watch, and what does that cost my battery?</summary>
-          <p>As many as you like. The menu bar shows as many dots as you allow it — eight by default, the ones with news first — and counts the rest as a <span class="mono">+N</span>. A check is one <span class="mono">ls-remote</span> per repository, a few hundred bytes, and a fetch only when the tip actually moved. Checks are staggered, run a few at a time, and pause completely when you’re offline or in Low Power Mode.</p>
+          <p>As many as you like. The menu bar shows as many dots as you allow it: eight by default, the ones with news first. The rest are counted as a <span class="mono">+N</span>. A check is one <span class="mono">ls-remote</span> per repository, a few hundred bytes, and a fetch only when the tip actually moved. Checks are staggered, run a few at a time, and pause completely when you’re offline or in Low Power Mode.</p>
         </details>
         <details>
           <summary>Where does it keep its data?</summary>
@@ -602,6 +608,18 @@
       <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 5l0 14"/>
         <path d="M5 12l14 0"/>
+      </g>
+    </symbol>
+    <symbol id="glyph-gear" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.3 4.3a1.9 1.9 0 0 1 3.4 0a1.9 1.9 0 0 0 2.8 1.2a1.9 1.9 0 0 1 2.4 2.4a1.9 1.9 0 0 0 1.2 2.8a1.9 1.9 0 0 1 0 3.4a1.9 1.9 0 0 0 -1.2 2.8a1.9 1.9 0 0 1 -2.4 2.4a1.9 1.9 0 0 0 -2.8 1.2a1.9 1.9 0 0 1 -3.4 0a1.9 1.9 0 0 0 -2.8 -1.2a1.9 1.9 0 0 1 -2.4 -2.4a1.9 1.9 0 0 0 -1.2 -2.8a1.9 1.9 0 0 1 0 -3.4a1.9 1.9 0 0 0 1.2 -2.8a1.9 1.9 0 0 1 2.4 -2.4a1.9 1.9 0 0 0 2.8 -1.2"/>
+        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/>
+      </g>
+    </symbol>
+    <symbol id="glyph-power" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 6a7.75 7.75 0 1 0 10 0"/>
+        <path d="M12 4l0 8"/>
       </g>
     </symbol>
     <symbol id="glyph-bell" viewBox="0 0 24 24">

@@ -41,8 +41,8 @@ struct ScreenshotTests {
         #expect(FileManager.default.fileExists(atPath: directory.appendingPathComponent("hero-light.jpg").path))
     }
 
-    /// Renders through a real (offscreen) window so AppKit-backed controls — pickers, toggles, menus,
-    /// SettingsLink — draw like they do on screen. `ImageRenderer` cannot draw those.
+    /// Renders through a real (offscreen) window so AppKit-backed controls (pickers, toggles, menus,
+    /// buttons) draw like they do on screen. `ImageRenderer` cannot draw those.
     private func write(_ view: some View, name: String, to directory: URL, scale: CGFloat = 2, format: NSBitmapImageRep.FileType = .png) throws {
         // The offscreen window is never key; tell SwiftUI to draw controls in their active state anyway.
         let hosting = NSHostingView(rootView: view.environment(\.controlActiveState, .key))
@@ -151,28 +151,29 @@ struct ScreenshotScene {
         .environment(\.colorScheme, scheme)
     }
 
-    /// The panel alone, transparent, no shadow — the page applies its own elevation.
+    /// The panel alone, transparent, no shadow: the page applies its own elevation.
     func panelBare(_ scheme: ColorScheme) -> some View {
         panelView(scheme)
             .padding(6)
             .environment(\.colorScheme, scheme)
     }
 
-    static let settingsTabs = ["General", "Notifications", "Repositories", "Menu Bar", "Advanced", "About"]
-    static let settingsIcons = ["gearshape", "bell", "folder", "menubar.rectangle", "wrench.and.screwdriver", "info.circle"]
-
-    /// The Settings window with no canvas and no baked shadow.
-    func settingsBare(_ scheme: ColorScheme) -> some View {
-        WindowFrame(title: "General", tabs: Self.settingsTabs, icons: Self.settingsIcons, selected: 0, scheme: scheme) {
+    /// Settings on the pane people land on: the real form, in the shell's chrome.
+    func settingsView(_ scheme: ColorScheme) -> some View {
+        SettingsWindowFrame(pane: .general, scheme: scheme) {
             GeneralSettingsView()
                 .environment(model)
                 .environment(loginItem)
                 .environment(notifications)
                 .environment(updates)
-                .frame(width: 640)
         }
-        .padding(6)
-        .environment(\.colorScheme, scheme)
+    }
+
+    /// The Settings window with no canvas and no baked shadow.
+    func settingsBare(_ scheme: ColorScheme) -> some View {
+        settingsView(scheme)
+            .padding(6)
+            .environment(\.colorScheme, scheme)
     }
 
     /// 1200x630 social card, rendered from the same components the app ships.
@@ -192,7 +193,7 @@ struct ScreenshotScene {
                     .font(.system(size: 76, weight: .semibold))
                     .foregroundStyle(.white)
                     .padding(.top, 40)
-                Text("Know which repositories have new commits — without clicking.")
+                Text("Know which repositories have new commits, without clicking.")
                     .font(.system(size: 30, weight: .regular))
                     .foregroundStyle(.white.opacity(0.88))
                     .lineLimit(2)
@@ -212,7 +213,7 @@ struct ScreenshotScene {
     func menuBarStyles(_ scheme: ColorScheme) -> some View {
         let base = model.menuBar
         let variants: [(String, String, MenuBarState)] = [
-            ("Dots", "One dot per repository — filled when the remote has new commits, a hollow ring when idle, ring + ! on errors.", { var s = base; s.style = .dots; return s }()),
+            ("Dots", "One dot per repository: filled when the remote has new commits, a hollow ring when idle, ring + ! on errors.", { var s = base; s.style = .dots; return s }()),
             ("Count", "The number of repositories (or commits) with new commits.", { var s = base; s.style = .count; return s }()),
             ("Icon only", "Just the glyph, with an accent dot when something is new.", { var s = base; s.style = .iconOnly; return s }()),
         ]
@@ -250,18 +251,11 @@ struct ScreenshotScene {
     }
 
     func settings(_ scheme: ColorScheme) -> some View {
-        WindowFrame(title: "General", tabs: Self.settingsTabs, icons: Self.settingsIcons, selected: 0, scheme: scheme) {
-            GeneralSettingsView()
-                .environment(model)
-                .environment(loginItem)
-                .environment(notifications)
-                .environment(updates)
-                .frame(width: 640)
-        }
-        .shadow(color: .black.opacity(scheme == .dark ? 0.6 : 0.22), radius: 22, y: 10)
-        .padding(44)
-        .background(Self.canvas(scheme))
-        .environment(\.colorScheme, scheme)
+        settingsView(scheme)
+            .shadow(color: .black.opacity(scheme == .dark ? 0.6 : 0.22), radius: 22, y: 10)
+            .padding(44)
+            .background(Self.canvas(scheme))
+            .environment(\.colorScheme, scheme)
     }
 }
 
@@ -333,46 +327,98 @@ struct PopoverArrow: Shape {
     }
 }
 
-/// Settings-window chrome: traffic lights + toolbar tabs.
-struct WindowFrame<Content: View>: View {
-    let title: String
-    let tabs: [String]
-    let icons: [String]
-    let selected: Int
+/// The Settings window around a real pane: the sidebar, the title bar and the grouped form
+/// the shell puts it in. Drawn here rather than hosted, because an offscreen `NSHostingView`
+/// leaves a `NavigationSplitView`'s sidebar blank. The rows come from the pane enum itself,
+/// so this cannot drift from the app's own sidebar.
+struct SettingsWindowFrame<Content: View>: View {
+    let pane: FetchBarSettingsPane
     let scheme: ColorScheme
     @ViewBuilder let content: Content
 
+    private static var sidebarWidth: CGFloat { SettingsShell<FetchBarSettingsPane, EmptyView>.sidebarWidth }
+    private static var size: NSSize { SettingsShell<FetchBarSettingsPane, EmptyView>.size }
+
+    private var sidebarBackground: Color {
+        scheme == .dark ? Color(red: 0.14, green: 0.14, blue: 0.15) : Color(red: 0.91, green: 0.91, blue: 0.92)
+    }
+
+    private var detailBackground: Color {
+        scheme == .dark ? Color(red: 0.11, green: 0.11, blue: 0.12) : Color(red: 0.96, green: 0.96, blue: 0.97)
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                HStack(spacing: 8) {
-                    Circle().fill(Color(red: 1.0, green: 0.38, blue: 0.35))
-                    Circle().fill(Color(red: 1.0, green: 0.74, blue: 0.18))
-                    Circle().fill(Color(red: 0.16, green: 0.79, blue: 0.26))
-                }
-                .frame(width: 52, height: 12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 14)
-                HStack(spacing: 6) {
-                    ForEach(Array(tabs.enumerated()), id: \.offset) { index, tab in
-                        VStack(spacing: 3) {
-                            Image(systemName: icons[index]).font(.system(size: 19))
-                            Text(tab).font(.system(size: 11)).fixedSize()
-                        }
-                        // Width follows the label: a fixed one clipped the longer tab names.
-                        .padding(.horizontal, 10)
-                        .frame(minWidth: 64, minHeight: 50)
-                        .foregroundStyle(index == selected ? Color.accentColor : .secondary)
-                        .background(index == selected ? Color.primary.opacity(0.08) : .clear, in: RoundedRectangle(cornerRadius: 6))
-                    }
-                }
+        HStack(spacing: 0) {
+            sidebar
+            VStack(spacing: 0) {
+                titleBar
+                Form { content }
+                    .formStyle(.grouped)
+                    .scrollContentBackground(.hidden)
             }
-            .frame(height: 64)
-            .background(scheme == .dark ? Color(red: 0.20, green: 0.20, blue: 0.21) : Color(red: 0.96, green: 0.96, blue: 0.96))
-            Divider()
-            content
-                .background(scheme == .dark ? Color(red: 0.13, green: 0.13, blue: 0.14) : Color(red: 0.94, green: 0.94, blue: 0.95))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(detailBackground)
         }
+        .frame(width: Self.size.width, height: Self.size.height)
         .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
+    }
+
+    private var sidebar: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 8) {
+                Circle().fill(Color(red: 1.0, green: 0.38, blue: 0.35))
+                Circle().fill(Color(red: 1.0, green: 0.74, blue: 0.18))
+                Circle().fill(Color(red: 0.16, green: 0.79, blue: 0.26))
+            }
+            .frame(width: 52, height: 12)
+            .padding(.leading, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 26)
+
+            ForEach(Array(FetchBarSettingsPane.allCases), id: \.self) { item in
+                Label(item.title, systemImage: item.symbol)
+                    .font(.system(size: 13))
+                    .foregroundStyle(item == pane ? Color.accentColor : .primary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(item == pane ? Color.primary.opacity(scheme == .dark ? 0.14 : 0.09) : .clear,
+                                in: RoundedRectangle(cornerRadius: 6))
+                    .padding(.horizontal, 10)
+            }
+
+            Spacer(minLength: 0)
+
+            HStack(spacing: 8) {
+                Image(nsImage: NSImage(named: "AppIcon") ?? NSApp.applicationIconImage)
+                    .resizable()
+                    .frame(width: 22, height: 22)
+                Text("FetchBar").font(.system(size: 13)).foregroundStyle(.secondary)
+                Spacer(minLength: 8)
+                Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
+                    .font(.system(size: 12))
+                    .monospacedDigit()
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+        .frame(width: Self.sidebarWidth)
+        .background(sidebarBackground)
+    }
+
+    private var titleBar: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 4) {
+                Image(systemName: "chevron.left")
+                Image(systemName: "chevron.right")
+            }
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(.tertiary)
+            Text(pane.title).font(.headline)
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 52)
     }
 }

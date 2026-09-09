@@ -16,6 +16,7 @@ final class AppDependencies {
     let loginItem: LoginItemController
     let triggers: SystemTriggers
     let updates: UpdateController
+    let settingsWindow: SettingsWindowController
     let panelUI = PanelUIState()
     private var observationTask: Task<Void, Never>?
 
@@ -28,6 +29,17 @@ final class AppDependencies {
         loginItem = LoginItemController()
         triggers = SystemTriggers(model: model)
         updates = UpdateController()
+        let model = model, settings = settings, loginItem = loginItem
+        let notifications = notifications, updates = updates
+        settingsWindow = SettingsWindowController(
+            size: SettingsShell<FetchBarSettingsPane, EmptyView>.size,
+            minimumSize: SettingsShell<FetchBarSettingsPane, EmptyView>.minimumSize,
+            initialPane: FetchBarSettingsPane.general
+        ) { selection in
+            AnyView(SettingsView(selection: selection)
+                .environment(model).environment(settings)
+                .environment(loginItem).environment(notifications).environment(updates))
+        }
         wire()
     }
 
@@ -50,7 +62,7 @@ final class AppDependencies {
         statusItem.onRefreshAll = { model.refreshAll() }
         statusItem.onMarkAllSeen = { model.markAllSeen() }
         statusItem.onTogglePause = { model.togglePause() }
-        statusItem.onOpenSettings = { AppActivation.openSettings() }
+        statusItem.onOpenSettings = { [weak self] in self?.settingsWindow.show() }
         statusItem.onQuit = { NSApp.terminate(nil) }
         statusItem.onPanelOpened = {
             panelUI.selected = nil
@@ -115,7 +127,7 @@ final class AppDependencies {
         }
     }
 
-    /// Applies the user's appearance choice to the popover.
+    /// Applies the user's appearance choice to the popover and the Settings window.
     private func observeAppearance() {
         let appearance = withObservationTracking {
             settings.appearance
@@ -123,6 +135,7 @@ final class AppDependencies {
             Task { @MainActor in self?.observeAppearance() }
         }
         statusItem.appearance = appearance.nsAppearance
+        settingsWindow.appearance = appearance.nsAppearance
     }
 
     /// Re-renders the status item whenever the derived menu bar state changes.

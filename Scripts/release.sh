@@ -1,6 +1,7 @@
 #!/bin/bash
-# FetchBar release: version bump → Release build → sign → zip (+ install.txt) → landing page
-#                  → Sparkle appcast → git commit/tag/push → GitHub release with assets.
+# FetchBar release: version bump → Release build → sign → zip (Sparkle's payload) → notarize
+#                  → disk image (what people download) → landing page → Sparkle appcast
+#                  → git commit/tag/push → GitHub release with the disk image, the zip and the feed.
 #
 # Usage:
 #   Scripts/release.sh <version> [--notes FILE] [--dry-run] [--no-git] [--draft] [--prerelease] [--adhoc]
@@ -15,7 +16,7 @@
 #   REPO            GitHub slug (default: aliyar/FetchBar)
 #   NOTARY_PROFILE  notarytool keychain profile; notarization runs only with Developer ID signing.
 #
-# Prerequisites: xcodegen, gh (logged in), Xcode, the Sparkle EdDSA key in the keychain
+# Prerequisites: xcodegen, gh (logged in), Xcode, create-dmg, the Sparkle EdDSA key in the keychain
 # (generated once with generate_keys; back it up with `generate_keys -x sparkle_private_key`).
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -44,7 +45,12 @@ TAG="v$VERSION"
 APP_NAME="FetchBar"
 DIST="dist"
 STAGE="$DIST/$APP_NAME-$VERSION"
-ZIP="$DIST/$APP_NAME-$VERSION.zip"
+# generate_appcast reads a directory and makes an entry out of every archive it finds there,
+# so the zip Sparkle downloads gets a directory of its own and the disk image stays out of it.
+SPARKLE_DIR="$DIST/sparkle"
+ZIP="$SPARKLE_DIR/$APP_NAME-$VERSION.zip"
+DMG="$DIST/$APP_NAME-$VERSION.dmg"
+DMG_BACKGROUND_DIR="Design/DMG"          # written by `make icon`
 DERIVED="build/Release"
 SPARKLE_BIN="build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin"
 DOWNLOAD_PREFIX="https://github.com/$REPO/releases/download/$TAG/"
@@ -54,14 +60,17 @@ die() { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 
 # ---------- preconditions ----------
 step "Checking prerequisites"
-for tool in xcodegen gh xcodebuild ditto plutil codesign python3; do
+for tool in xcodegen gh xcodebuild ditto plutil codesign python3 create-dmg tiffutil; do
   command -v "$tool" >/dev/null || die "$tool is required"
+done
+for f in background.png background@2x.png; do
+  [[ -f "$DMG_BACKGROUND_DIR/$f" ]] || die "$DMG_BACKGROUND_DIR/$f is missing. Run: make icon"
 done
 if [[ $DRY_RUN -eq 0 ]]; then
   gh auth status >/dev/null 2>&1 || die "gh is not logged in (run: gh auth login)"
   git rev-parse -q --verify "refs/tags/$TAG" >/dev/null && die "tag $TAG already exists"
   if [[ $NO_GIT -eq 0 ]]; then
-    [[ -z "$(git status --porcelain)" ]] || die "working tree is not clean — commit or stash first"
+    [[ -z "$(git status --porcelain)" ]] || die "working tree is not clean. Commit or stash first"
     git remote get-url origin >/dev/null 2>&1 || die "git remote 'origin' is missing"
   fi
 fi
@@ -123,7 +132,7 @@ APP="$DERIVED/Build/Products/Release/$APP_NAME.app"
 if [[ "$SIGN_MODE" == "Developer ID" ]]; then
   step "Re-signing the embedded Sparkle helpers"
   SPARKLE="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
-  [[ -d "$SPARKLE" ]] || die "Sparkle.framework has no Versions/B — check the layout before signing"
+  [[ -d "$SPARKLE" ]] || die "Sparkle.framework has no Versions/B. Check the layout before signing"
   for nested in "$SPARKLE/XPCServices/Downloader.xpc" "$SPARKLE/XPCServices/Installer.xpc" \
                 "$SPARKLE/Updater.app" "$SPARKLE/Autoupdate"; do
     [[ -e "$nested" ]] || continue
@@ -146,36 +155,86 @@ AUTHORITY=$(codesign -dv --verbose=2 "$APP" 2>&1 | sed -n 's/^Authority=//p' | h
 echo "  $APP_NAME $BUILT_VERSION ($(plutil -extract CFBundleVersion raw "$PLIST")), signed by ${AUTHORITY:-ad-hoc identity}"
 
 # ---------- package ----------
-step "Packaging"
-# The app must sit at the archive root (generate_appcast requirement); install.txt rides along.
+step "Packaging the update archive"
+# Sparkle's payload, and only Sparkle's: the app must sit at the archive root
+# (generate_appcast requirement); install.txt rides along for anyone who unpacks it by hand.
 # Archive Utility unpacks multi-item archives into a folder named after the zip.
-rm -rf "$DIST"; mkdir -p "$STAGE"
+rm -rf "$DIST"; mkdir -p "$STAGE" "$SPARKLE_DIR"
 cp -R "$APP" "$STAGE/"
 sed "s/{{VERSION}}/$VERSION/g" Scripts/install.template.txt > "$STAGE/install.txt"
-cp "$STAGE/install.txt" "$DIST/install.txt"
 ditto -c -k --norsrc "$STAGE" "$ZIP"
-rm -rf "$STAGE"
 
-if [[ "$SIGN_MODE" == "Developer ID" && -n "${NOTARY_PROFILE:-}" ]]; then
-  step "Notarizing"
-  xcrun notarytool submit "$ZIP" --keychain-profile "$NOTARY_PROFILE" --wait \
-    --output-format json > "$DIST/.notary.json" || true
-  NOTARY_STATUS=$(python3 -c "import json;d=json.load(open('$DIST/.notary.json'));print(d.get('status',''))")
-  NOTARY_ID=$(python3 -c "import json;d=json.load(open('$DIST/.notary.json'));print(d.get('id',''))")
-  echo "  submission $NOTARY_ID: $NOTARY_STATUS"
-  [[ "$NOTARY_STATUS" == "Accepted" ]] || die "notarization $NOTARY_STATUS — see: xcrun notarytool log $NOTARY_ID --keychain-profile $NOTARY_PROFILE"
-  mkdir -p "$STAGE"; ditto -x -k "$ZIP" "$STAGE"
+# Two files go to Apple, the archive and the disk image, so the submission is a function.
+# notarytool exits 0 even when Apple rejects the submission, so read the status, not $?.
+notarize() { # <file> <what it is>
+  local file="$1" what="$2" json status id
+  json="$DIST/.notary-$(basename "$file").json"
+  echo "  submitting $what to Apple (usually a few minutes)…"
+  xcrun notarytool submit "$file" --keychain-profile "$NOTARY_PROFILE" --wait \
+    --output-format json > "$json" || true
+  status=$(python3 -c "import json;d=json.load(open('$json'));print(d.get('status',''))")
+  id=$(python3 -c "import json;d=json.load(open('$json'));print(d.get('id',''))")
+  echo "  submission $id: $status"
+  [[ "$status" == "Accepted" ]] || die "notarization of $what $status. See: xcrun notarytool log $id --keychain-profile $NOTARY_PROFILE"
+}
+
+NOTARIZE=0
+[[ "$SIGN_MODE" == "Developer ID" && -n "${NOTARY_PROFILE:-}" ]] && NOTARIZE=1
+if [[ $NOTARIZE -eq 1 ]]; then
+  step "Notarizing the app"
+  notarize "$ZIP" "the app"
+  # Staple, then rebuild the zip: everything derived from it (EdDSA signature, length) must
+  # describe the file Sparkle actually downloads.
   xcrun stapler staple "$STAGE/$APP_NAME.app"
-  rm "$ZIP"; ditto -c -k --norsrc "$STAGE" "$ZIP"; rm -rf "$STAGE"
+  rm "$ZIP"; ditto -c -k --norsrc "$STAGE" "$ZIP"
 fi
-echo "  $(du -h "$ZIP" | cut -f1) $ZIP"
+echo "  $(du -h "$ZIP" | cut -f1) $ZIP · for updates"
+
+# ---------- disk image ----------
+# What people download: the stapled app, a link to Applications, and a window laid out so
+# the one thing to do is obvious. An app run straight out of a zip in Downloads runs from a
+# read-only copy that cannot update itself; a window with an arrow in it is what gets an app
+# into Applications. The background is drawn by `make icon` and the positions here match the
+# arrow in it. create-dmg lays the window out through the Finder, which asks once for
+# permission to control it (System Settings › Privacy & Security › Automation).
+step "Building the disk image"
+# Scratch lives in build/, not dist/: dist/ holds what ships, and create-dmg's Finder script
+# refuses a background file whose name starts with a dot (it lands hidden inside .background/).
+DMG_STAGE="build/dmg-stage"; rm -rf "$DMG_STAGE"; mkdir -p "$DMG_STAGE"
+ditto "$STAGE/$APP_NAME.app" "$DMG_STAGE/$APP_NAME.app"
+BACKGROUND="build/dmg-background.tiff"
+tiffutil -cathidpicheck "$DMG_BACKGROUND_DIR/background.png" "$DMG_BACKGROUND_DIR/background@2x.png" \
+  -out "$BACKGROUND" >/dev/null 2>&1 || die "tiffutil could not combine the disk image background"
+VOLICON_ARGS=()
+[[ -f "$DMG_STAGE/$APP_NAME.app/Contents/Resources/AppIcon.icns" ]] \
+  && VOLICON_ARGS=(--volicon "$DMG_STAGE/$APP_NAME.app/Contents/Resources/AppIcon.icns")
+rm -f "$DMG"
+if ! create-dmg \
+    --volname "$APP_NAME" "${VOLICON_ARGS[@]}" \
+    --background "$BACKGROUND" \
+    --window-pos 200 140 --window-size 660 400 \
+    --icon-size 128 --text-size 13 \
+    --icon "$APP_NAME.app" 165 180 --hide-extension "$APP_NAME.app" \
+    --app-drop-link 495 180 \
+    --no-internet-enable --hdiutil-quiet \
+    "$DMG" "$DMG_STAGE" > build/dmg.log 2>&1; then
+  tail -8 build/dmg.log >&2
+  die "create-dmg failed. If it could not run its AppleScript, allow the terminal to control the Finder and run again"
+fi
+[[ -f "$DMG" ]] || die "create-dmg produced no disk image"
+rm -rf "$DMG_STAGE" "$STAGE" "$BACKGROUND"
+if [[ $NOTARIZE -eq 1 ]]; then
+  codesign --force --sign "$DEVELOPER_ID" --timestamp "$DMG" || die "codesign of the disk image failed"
+  notarize "$DMG" "the disk image"
+  xcrun stapler staple "$DMG"
+  xcrun stapler validate "$DMG" >/dev/null || die "stapler validate of the disk image failed"
+fi
+echo "  $(du -h "$DMG" | cut -f1) $DMG · for people"
 
 # ---------- landing page ----------
-# After notarization, never before: stapling rewrites the archive, so the checksum the page
-# publishes has to be taken from the file that actually ships.
 step "Pointing the landing page at $TAG"
-Scripts/site-build.py --check >/dev/null || die "site pages are out of date with their partials — run: make site-build"
-Scripts/site-version.sh "$VERSION" "$ZIP" "$REPO"
+Scripts/site-build.py --check >/dev/null || die "site pages are out of date with their partials. Run: make site-build"
+Scripts/site-version.sh "$VERSION" "$REPO"
 
 # ---------- release notes → HTML for the appcast ----------
 notes_to_html() {  # markdown-ish file in $1 → simple HTML on stdout
@@ -232,14 +291,14 @@ PY
 make_appcast() {
   local notes_md="$1"
   if [[ -n "$notes_md" ]]; then
-    notes_to_html "$notes_md" > "$DIST/$APP_NAME-$VERSION.html"
+    notes_to_html "$notes_md" > "$SPARKLE_DIR/$APP_NAME-$VERSION.html"
   fi
   "$SPARKLE_BIN/generate_appcast" \
     --download-url-prefix "$DOWNLOAD_PREFIX" \
     --link "https://github.com/$REPO/releases/tag/$TAG" \
     --full-release-notes-url "https://github.com/$REPO/releases" \
-    -o "$DIST/appcast.xml" "$DIST" >/dev/null
-  rm -f "$DIST/$APP_NAME-$VERSION.html"
+    -o "$DIST/appcast.xml" "$SPARKLE_DIR" >/dev/null
+  rm -f "$SPARKLE_DIR/$APP_NAME-$VERSION.html"
   grep -q "sparkle:edSignature" "$DIST/appcast.xml" || die "appcast has no EdDSA signature (is the Sparkle key in your keychain?)"
 }
 
@@ -270,9 +329,9 @@ GH_ARGS=(--repo "$REPO" --title "$APP_NAME $VERSION")
 [[ $DRAFT -eq 1 ]] && GH_ARGS+=(--draft)
 [[ $PRERELEASE -eq 1 ]] && GH_ARGS+=(--prerelease)
 if [[ -n "$NOTES_FILE" ]]; then
-  gh release create "$TAG" "$ZIP" "$DIST/install.txt" "$DIST/appcast.xml" "${GH_ARGS[@]}" --notes-file "$NOTES_FILE"
+  gh release create "$TAG" "$DMG" "$ZIP" "$DIST/appcast.xml" "${GH_ARGS[@]}" --notes-file "$NOTES_FILE"
 else
-  gh release create "$TAG" "$ZIP" "$DIST/install.txt" "${GH_ARGS[@]}" --generate-notes
+  gh release create "$TAG" "$DMG" "$ZIP" "${GH_ARGS[@]}" --generate-notes
   step "Generating Sparkle appcast from the release notes"
   gh release view "$TAG" --repo "$REPO" --json body --jq .body > "$DIST/.notes.md"
   make_appcast "$DIST/.notes.md"

@@ -1,4 +1,4 @@
-/* FetchBar — fetchbar.greatpixels.com
+/* FetchBar, fetchbar.greatpixels.com
    The page is a commit graph: five colored rails, one per repository, run the whole
    scroll and every section sits on a node. Commit Mono is the notation voice, the
    system face carries prose. CSP forbids inline styles: everything here is a class. */
@@ -57,7 +57,7 @@
   --radius:   8px;
   --radius-lg: 14px;
 
-  --gutter: 44px;          /* rail column width — keeps the rails clear of the text */
+  --gutter: 44px;          /* rail column width, keeps the rails clear of the text */
   --cap-top: 76px;         /* aligns the rail heads with the loupe’s dots */
   --cap-size: 7px;
   --rail-gap: 6px;
@@ -277,7 +277,7 @@ img, svg { display: block; max-width: 100%; }
   transition: background 220ms ease, color 220ms ease;
 }
 /* A real menu bar is glass: lit from above, with the wallpaper darkening at its lower
-   edge. One gradient serves both themes — over a light bar the white is invisible and
+   edge. One gradient serves both themes: over a light bar the white is invisible and
    the shadow does the work, over a dark one it reads as the highlight. */
 :root {
   --bar-sheen: linear-gradient(180deg,
@@ -376,7 +376,7 @@ html:not(.js) #rb-trigger { pointer-events: none; }
     0 40px 72px -28px rgba(0,0,0,.30);
 }
 /* the panel carries its own appearance, because the bar above it is a dark
-   macOS simulation sitting on a light page — and the demo lets you switch it */
+   macOS simulation sitting on a light page, and the demo lets you switch it */
 [data-appearance="dark"] .rb-pop {
   --rb-surface: #2A2A2D; --rb-surface-2: #37373B; --rb-hair: rgba(255,255,255,.13);
   --rb-text: #F2F2F5; --rb-text-2: rgba(242,242,245,.74); --rb-text-3: rgba(242,242,245,.52);
@@ -425,15 +425,21 @@ html:not(.js) #rb-trigger { pointer-events: none; }
 
 .rb-foot-r { display: flex; align-items: center; gap: 10px; }
 .rb-pop.is-paused .rb-rows { opacity: .55; }
-.rb-foot-link { color: inherit; text-decoration: none; }
-.rb-foot-link:focus-visible { outline-offset: 1px; }
+.rb-foot-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 22px; padding: 0 9px; border-radius: 7px;
+  background: rgba(128,128,140,.12); color: inherit; text-decoration: none;
+}
+.rb-foot-btn--icon { width: 26px; padding: 0; }
+.rb-foot-btn--icon svg { width: 13px; height: 13px; }
+.rb-foot-btn:focus-visible { outline-offset: 1px; }
 .macbar.is-paused .menubar--real .mb-glyph,
 .macbar.is-paused .mb-dots { opacity: .45; }
 
 
 @keyframes rb-spin { to { transform: rotate(360deg); } }
 .rb-status {
-  /* the app's .caption (10pt), at the demo's caption size — see .rb-branch, .rb-meta */
+  /* the app's .caption (10pt), at the demo's caption size; see .rb-branch, .rb-meta */
   font-size: 11px; line-height: 1.45; font-weight: 500; letter-spacing: -.01em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -525,8 +531,7 @@ html:not(.js) #rb-trigger { pointer-events: none; }
 .rb-dropdown button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .rb-note { font-size: 11px; color: var(--rb-text-3); }
 
-.rb-plus { width: 13px; height: 13px; margin-right: 5px; vertical-align: -2px; }
-.rb-foot-l { display: inline-flex; align-items: center; }
+.rb-plus { width: 13px; height: 13px; margin-right: 5px; }
 .rb-foot {
   border-radius: 0 0 12px 12px;
   display: flex; align-items: center; justify-content: space-between;
@@ -544,7 +549,7 @@ html:not(.js) #rb-trigger { pointer-events: none; }
 /* A finger cannot hover; on touch the highlight would stick to whatever was tapped last. */
 @media (hover: hover) {
   .rb-icon:hover { background: rgba(128,128,140,.14); color: var(--rb-text); }
-  .rb-foot-link:hover { color: var(--rb-text); }
+  .rb-foot-btn:hover { background: rgba(128,128,140,.2); color: var(--rb-text); }
   .rb-row:hover { background: rgba(128,128,140,.10); }
   .rb-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--rb-surface-2) 70%, var(--rb-text) 8%); }
   .rb-dropdown button:hover { background: var(--accent); color: var(--on-accent); }
@@ -806,8 +811,21 @@ h3 {
 /* ── install ───────────────────────────────────────────────────────────── */
 .dl { margin-top: var(--s10); }
 .dl-meta { margin-top: var(--s3); font: 400 13px/1.5 var(--font-mono); color: var(--text-3); }
-.dl-sha { margin-top: 6px; font-size: 12px; color: var(--text-3); overflow-wrap: anywhere; }
-.dl-sha .mono { background: none; border: 0; padding: 0; font-size: 11.5px; }
+
+/* What the disk image window shows, in miniature: the app, an arrow, Applications. */
+.dmg {
+  margin: var(--s10) 0 0; padding: var(--s6) var(--s5);
+  display: flex; align-items: center; justify-content: center; gap: var(--s5);
+  max-width: 420px; border-radius: var(--radius-lg);
+  background: var(--paper-2); box-shadow: inset 0 0 0 1px var(--hairline);
+}
+.dmg-app { width: 64px; height: 64px; }
+.dmg-arrow { width: 26px; height: 26px; color: var(--text-3); }
+.dmg-folder {
+  display: grid; place-items: center; gap: var(--s1);
+  font: 400 11px/1 var(--font-mono); color: var(--text-3);
+}
+.dmg-folder svg { width: 58px; height: 58px; }
 
 .steps { margin: var(--s10) 0 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: var(--s5); }
 .steps li {

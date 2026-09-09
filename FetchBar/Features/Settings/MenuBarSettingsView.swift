@@ -14,26 +14,26 @@ struct MenuBarSettingsView: View {
 
     var body: some View {
         @Bindable var settings = model.settings
-        Form {
-            Section {
-                MenuBarPreview(state: model.menuBar)
-                Picker("Style", selection: $settings.menuBarStyle) {
-                    ForEach(MenuBarStyle.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                }
-                .pickerStyle(.segmented)
+        Section {
+            MenuBarPreview(state: model.menuBar)
+            Picker("Style", selection: $settings.menuBarStyle) {
+                ForEach(MenuBarStyle.allCases, id: \.self) { Text($0.displayName).tag($0) }
             }
+            .pickerStyle(.segmented)
+        } footer: {
+            Footnote("A dot per repository, one number for all of them, or the glyph on its own with a small dot when something is new.")
+        }
 
-            if settings.menuBarStyle == .dots {
-                Section("Dots") {
-                    Toggle("Show idle repositories", isOn: $settings.showIdleDots)
-                    if settings.showIdleDots {
-                        Picker("Idle dot style", selection: $settings.idleDotStyle) {
-                            ForEach(IdleDotStyle.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                        }
+        if settings.menuBarStyle == .dots {
+            Section {
+                Toggle("Show idle repositories", isOn: $settings.showIdleDots)
+                if settings.showIdleDots {
+                    Picker("Idle dot style", selection: $settings.idleDotStyle) {
+                        ForEach(IdleDotStyle.allCases, id: \.self) { Text($0.displayName).tag($0) }
                     }
-                    HStack {
-                        Text("Show at most")
-                        Spacer(minLength: 8)
+                }
+                LabeledContent("Show at most") {
+                    HStack(spacing: 6) {
                         TextField("", value: $settings.maxMenuBarDots, format: .number)
                             .labelsHidden()
                             .multilineTextAlignment(.trailing)
@@ -42,20 +42,23 @@ struct MenuBarSettingsView: View {
                             .labelsHidden()
                         Text("dots").foregroundStyle(.secondary)
                     }
-                    Text(Self.limitExplanation(max: settings.maxMenuBarDots, repositories: model.records.count))
-                        .font(.caption).foregroundStyle(.secondary)
                 }
-            }
-
-            if settings.menuBarStyle == .count {
-                Section("Count") {
-                    Picker("Count shows", selection: $settings.badgeMode) {
-                        ForEach(BadgeMode.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                    }
-                }
+            } header: {
+                Text("Dots")
+            } footer: {
+                Footnote(Self.limitExplanation(max: settings.maxMenuBarDots, repositories: model.records.count))
             }
         }
-        .formStyle(.grouped)
+
+        if settings.menuBarStyle == .count {
+            Section {
+                Picker("Count shows", selection: $settings.badgeMode) {
+                    ForEach(BadgeMode.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                }
+            } header: {
+                Text("Count")
+            }
+        }
     }
 }
 
@@ -65,7 +68,7 @@ struct MenuBarPreview: View {
 
     var body: some View {
         // Always a fixed, made-up scenario rather than the real repositories: the point
-        // is to show what a style looks like, and the real state is usually quiet —
+        // is to show what a style looks like, and the real state is usually quiet.
         // Count would render an empty menu bar exactly when you are choosing it.
         let layout = StatusItemLayout.make(from: MenuBarState.sample(styledLike: state))
         HStack(spacing: 12) {

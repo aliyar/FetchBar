@@ -5,7 +5,7 @@
 <h1 align="center">FetchBar</h1>
 
 <p align="center">
-  Know when your repositories have new commits — from the menu bar, without clicking.
+  Know when your repositories have new commits, from the menu bar, without clicking.
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 </p>
 
 FetchBar is a small macOS menu bar app for people who work across several git repositories. Add your
-local clones once; FetchBar checks their remotes every few minutes and shows — right in the menu bar —
+local clones once; FetchBar checks their remotes every few minutes and shows, right in the menu bar,
 which ones have commits you haven't pulled yet. Click the icon to see the commits, open them on
 GitHub/GitLab, fast-forward your branch, or jump into the repository with your editor.
 
@@ -37,18 +37,18 @@ GitHub/GitLab, fast-forward your branch, or jump into the repository with your e
 - **Glanceable.** One colored dot per repository in the menu bar: filled when the remote is ahead of you,
   a hollow ring when you're up to date, a ring with `!` when a check failed. Prefer a number? Switch to the *Count* style.
 - **Honest about your repositories.** Checks use `git ls-remote` and only `fetch` when the branch tip moved.
-  FetchBar never touches your working tree, never runs `gc`, and never prompts for credentials — it uses the
+  FetchBar never touches your working tree, never runs `gc`, and never prompts for credentials: it uses the
   same SSH keys, agent and credential helpers your terminal does.
 - **Useful when you click.** Branch, ↓ behind / ↑ ahead, uncommitted-changes dot, the list of incoming commits
-  (click one to open it on the web), *Pull* (fast-forward only — no merge commits, refused if the tree is dirty),
-  *Mark as seen*, *Open in* Finder / Terminal / VS Code / Cursor / Xcode / Fork / Tower… — or any application
+  (click one to open it on the web), *Pull* (fast-forward only, no merge commits, refused if the tree is dirty),
+  *Mark as seen*, *Open in* Finder / Terminal / VS Code / Cursor / Xcode / Fork / Tower, or any application
   you add yourself. Each repository remembers the one you opened it with last.
 - **One step to the right page.** *Repository Page*, *Pull Requests*, *Issues*, *Actions*, *Branches*, *Tags*,
-  *Releases* — all built from the repository's own remote, so there is no account to connect and no token to
+  *Releases*, all built from the repository's own remote, so there is no account to connect and no token to
   store. When commits are waiting, *View 3 New Commits* opens the compare view for exactly those; on a branch
   that is already pushed, *New Pull Request*. GitHub, GitLab, Bitbucket, Gitea/Forgejo and Azure DevOps are
   understood, and a page a forge does not have is left out rather than guessed at.
-- **Notifications** when new commits arrive, with *Open* and *Pull* actions — plus a reminder when your own
+- **Notifications** when new commits arrive, with *Open* and *Pull* actions, plus a reminder when your own
   commits have been sitting unpushed. Silence everything for a while, or one repository at a time; a timed
   mute lifts itself.
 - **Keyboard-friendly.** A global shortcut opens the panel (⌃⌘R out of the box); arrows move, → expands,
@@ -64,7 +64,7 @@ GitHub/GitLab, fast-forward your branch, or jump into the repository with your e
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/menubar-styles-dark.png">
-    <img src="docs/screenshots/menubar-styles-light.png" width="860" alt="The three menu bar styles — Dots, Count, Icon only — each shown on a light and a dark menu bar">
+    <img src="docs/screenshots/menubar-styles-light.png" width="860" alt="The three menu bar styles (Dots, Count, Icon only), each shown on a light and a dark menu bar">
   </picture>
 </p>
 
@@ -85,11 +85,11 @@ first, and counts the rest as `+N`.
   </tr>
 </table>
 
-- Light, dark or system appearance — *Settings › General › Theme*.
+- Light, dark or system appearance: *Settings › Appearance*.
 - Repositories with new commits come first. Click a row to expand it; right-click for everything else
-  (*Check Now*, *Copy Path*, *Copy Repository URL*, the repository's web pages, *Watch Branch…* — the remote's
+  (*Check Now*, *Copy Path*, *Copy Repository URL*, the repository's web pages, *Watch Branch…* with the remote's
   real branches, *Color*, *Notifications*, *Remove*).
-- Drop repository folders onto the panel to add them — or drop a folder that *contains* repositories and
+- Drop repository folders onto the panel to add them, or drop a folder that *contains* repositories and
   add them all at once.
 - Keyboard: <kbd>⌃⌘R</kbd> opens the panel from anywhere (configurable), then <kbd>↑</kbd><kbd>↓</kbd> to move,
   <kbd>→</kbd>/<kbd>←</kbd> to expand and collapse, <kbd>↩</kbd> to open the repository. Inside the panel:
@@ -104,22 +104,24 @@ first, and counts the rest as `+N`.
     <th width="50%">Dark</th>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/settings-light.png" alt="FetchBar settings in light appearance: the General tab with check interval, launch at login, theme and the panel shortcut"></td>
+    <td><img src="docs/screenshots/settings-light.png" alt="FetchBar settings in light appearance: the General pane with check interval, launch at login and the update controls, beside the sidebar of panes"></td>
     <td><img src="docs/screenshots/settings-dark.png" alt="FetchBar settings in dark appearance"></td>
   </tr>
 </table>
 
-Six tabs. *General*: check interval (1–60 min), launch at login, theme, and the shortcut that opens the panel.
-*Notifications*: new commits, unpushed-commit reminders, and silencing everything for a while. *Repositories*:
-the default "open in" application (plus any you add yourself) and the folders to watch for new clones.
-*Menu Bar*: style with a live preview. *Advanced*: the git binary to use, extra `PATH` entries for credential
-helpers, fetch timeout, concurrency, and whether to probe with `ls-remote` before fetching.
+A sidebar of panes, laid out the way System Settings is. *General*: check interval (1–60 min), launch at
+login, updates. *Appearance*: theme, the shortcut that opens the panel, and what happens when it opens.
+*Menu Bar*: style, with a live preview. *Repositories*: the default "open in" application (plus any you add
+yourself) and the folders to watch for new clones. *Notifications*: new commits, unpushed-commit reminders,
+and silencing everything for a while. *Advanced*: the git binary to use, extra `PATH` entries for credential
+helpers, fetch timeout, concurrency, and whether to probe with `ls-remote` before fetching. *Support* and
+*About* hold the links, the version and the update check.
 
 ## How a check works
 
-1. `git status --porcelain=v2 --branch` — branch, upstream and working-tree state (read-only, no index writes).
+1. `git status --porcelain=v2 --branch` for branch, upstream and working-tree state (read-only, no index writes).
 2. Resolve the watched ref: the current branch's upstream → the remote's default branch → a per-repository override.
-3. `git ls-remote --heads origin <branch>` — compare the remote tip with `refs/remotes/origin/<branch>`.
+3. `git ls-remote --heads origin <branch>` to compare the remote tip with `refs/remotes/origin/<branch>`.
 4. Only if it moved: `git fetch --porcelain --no-write-fetch-head --no-auto-maintenance --no-recurse-submodules origin`.
 5. `git rev-list --left-right --count` for ahead/behind and "unseen since you last looked",
    `git log HEAD..origin/<branch>` for the commit list.
@@ -130,14 +132,15 @@ concurrently. Everything stays on your Mac: FetchBar has no backend, no telemetr
 
 ## Install
 
-1. Download `FetchBar-<version>.zip` from the [latest release](https://github.com/aliyar/FetchBar/releases/latest)
-   and unzip it.
-2. Drag `FetchBar.app` to `/Applications` and open it. FetchBar lives in the menu bar — there is no Dock icon.
+1. Download `FetchBar-<version>.dmg` from the [latest release](https://github.com/aliyar/FetchBar/releases/latest)
+   and open it.
+2. Drag `FetchBar.app` onto `Applications` and open it from there. FetchBar lives in the menu bar, so there is
+   no Dock icon.
 
 Releases are signed with a Developer ID certificate and notarized by Apple, so macOS opens them without a
-warning. The release also ships an `install.txt` with these steps.
+warning. The `.zip` beside the disk image is what Sparkle downloads for updates; you do not need it.
 
-**Requirements:** macOS 14 (Sonoma) or later and a `git` binary — Homebrew's or the one from the Xcode
+**Requirements:** macOS 14 (Sonoma) or later and a `git` binary, Homebrew's or the one from the Xcode
 Command Line Tools. FetchBar finds it automatically and never triggers the "install developer tools" dialog.
 
 ## Build from source
@@ -156,7 +159,7 @@ make logs                # follow the app's OSLog output
 ```
 FetchBar/                 App: NSStatusItem + NSPopover shell, SwiftUI panel & settings, notifications, Sparkle
 Packages/FetchBarKit/     GitEngine: process runner, git client & parsers, checker, scheduler, persistence (+ tests)
-Scripts/                 release.sh, make-icon.swift, install.txt template
+Scripts/                 release.sh, make-icon.swift (app icon + disk image background), install.txt template
 docs/                    Icon and README screenshots (`make screenshots` regenerates them from the real views)
 ```
 
@@ -168,10 +171,14 @@ make release-dry VERSION=1.2.3      # build dist/ only, no git or GitHub
 ```
 
 `Scripts/release.sh` bumps the version in `project.yml`, builds a Release app (Developer ID signed and
-notarized — it falls back to ad-hoc signing when no certificate is installed), zips it with `install.txt`,
-signs the archive with the Sparkle EdDSA key, writes `appcast.xml`, commits and tags `vX.Y.Z`, pushes, and publishes a
-GitHub release with the zip, `install.txt` and `appcast.xml`. Running apps pick the update up from
-`https://github.com/aliyar/FetchBar/releases/latest/download/appcast.xml`.
+notarized; it falls back to ad-hoc signing when no certificate is installed), packages it twice: a `.dmg`
+with an Applications link for people, and a `.zip` for Sparkle, both notarized and stapled. It then signs
+the archive with the Sparkle EdDSA key, writes `appcast.xml`, points the landing page at the new version,
+commits and tags `vX.Y.Z`, pushes, and publishes a GitHub release with all three. Running apps pick the
+update up from `https://github.com/aliyar/FetchBar/releases/latest/download/appcast.xml`.
+
+The disk image needs `create-dmg` (`brew install create-dmg`) and the background in `Design/DMG`, which
+`make icon` writes.
 
 The EdDSA private key lives in the login keychain (created once with Sparkle's `generate_keys`; the public half
 is `SUPublicEDKey` in `project.yml`). Back it up with `generate_keys -x <file>` and keep it out of the repository.
@@ -179,9 +186,8 @@ is `SUPublicEDKey` in `project.yml`). Back it up with `generate_keys -x <file>` 
 ## Roadmap
 
 - Homebrew cask
-- Global keyboard shortcut to open the panel
 - `~/.ssh/config` host aliases → web URLs
-- Localization
+- Drag to reorder repositories
 
 ## Acknowledgements
 

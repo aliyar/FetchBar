@@ -4,6 +4,9 @@ A macOS menu bar app that tells you when your git repositories have new commits 
 ────────────────────────────────────────────────────────────
 INSTALL
 
+This archive is what FetchBar downloads to update itself. To install FetchBar by hand,
+the disk image on the release page is the easier way.
+
 1. Unzip this file (double-click it).
 2. Drag FetchBar.app into your Applications folder.
 3. Open it. This build is signed with a Developer ID certificate and
@@ -12,15 +15,15 @@ INSTALL
 ────────────────────────────────────────────────────────────
 FIRST RUN
 
-FetchBar lives in the menu bar (look for the branch icon) — there is no Dock icon.
+FetchBar lives in the menu bar (look for the branch icon); there is no Dock icon.
 Click it, then "Add Repository…" or drop repository folders onto the panel.
-Right-click the icon for quick actions; Settings has the check interval,
-notifications, launch-at-login and the menu bar style.
+Right-click the icon for quick actions. Settings has the check interval,
+notifications, launch at login and the menu bar style.
 
 UPDATES
 
 FetchBar checks for new versions once a day and can update itself.
-You can also check manually: menu bar icon  →  right-click  →  Settings…  →  About.
+You can also check manually: menu bar icon  ->  Settings  ->  General.
 
 REQUIREMENTS
 

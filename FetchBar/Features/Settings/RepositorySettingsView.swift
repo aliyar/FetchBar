@@ -7,59 +7,63 @@ struct RepositorySettingsView: View {
 
     var body: some View {
         @Bindable var settings = model.settings
-        Form {
-            Section("Open In") {
-                Picker("Default application", selection: $settings.defaultOpenAppBundleID) {
-                    ForEach(model.openApps) { app in
-                        Label {
-                            Text(app.name)
-                        } icon: {
-                            if let icon = OpenInService.icon(for: app) { Image(nsImage: icon) }
-                        }
-                        .tag(app.id)
+        Section {
+            Picker("Default application", selection: $settings.defaultOpenAppBundleID) {
+                ForEach(model.openApps) { app in
+                    Label {
+                        Text(app.name)
+                    } icon: {
+                        if let icon = OpenInService.icon(for: app) { Image(nsImage: icon) }
                     }
+                    .tag(app.id)
                 }
-                Text("Used for repositories you have not opened yet; afterwards each repository remembers the app you last opened it with.")
-                    .font(.caption).foregroundStyle(.secondary)
-                ForEach(model.openApps.filter { $0.kind == .custom }) { app in
+            }
+            ForEach(model.openApps.filter { $0.kind == .custom }) { app in
+                LabeledContent {
+                    Button("Remove") { model.removeCustomOpenApp(app.id) }.controlSize(.small)
+                } label: {
                     HStack {
                         if let icon = OpenInService.icon(for: app) { Image(nsImage: icon) }
                         Text(app.name)
-                        Spacer()
-                        Button("Remove") { model.removeCustomOpenApp(app.id) }.controlSize(.small)
                     }
-                }
-                HStack {
-                    if let error = addApplicationError {
-                        Text(error).font(.caption).foregroundStyle(.red)
-                    } else {
-                        Text("Any application that is not in the list.").font(.caption).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button("Add Application…") { chooseApplication() }.controlSize(.small)
                 }
             }
-
-            Section("Watched Folders") {
-                if settings.watchedFolders.isEmpty {
-                    Text("Clones added to a watched folder show up in FetchBar on their own.")
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-                ForEach(settings.watchedFolders, id: \.self) { folder in
-                    HStack {
-                        Image(systemName: "folder")
-                        Text((folder as NSString).abbreviatingWithTildeInPath).lineLimit(1).truncationMode(.head)
-                        Spacer()
-                        Button("Remove") { model.removeWatchedFolder(folder) }.controlSize(.small)
-                    }
-                }
-                HStack {
-                    Spacer()
-                    Button("Add Folder…") { chooseWatchedFolder() }.controlSize(.small)
-                }
+            LabeledContent {
+                Button("Add Application…") { chooseApplication() }.controlSize(.small)
+            } label: {
+                Text("Any application that is not in the list")
+                    .foregroundStyle(.secondary)
             }
+            if let error = addApplicationError {
+                Text(error).font(.callout).foregroundStyle(.red)
+            }
+        } header: {
+            Text("Open In")
+        } footer: {
+            Footnote("Used for repositories you have not opened yet. Afterwards each repository remembers the app you last opened it with, so the button is already right the next time.")
         }
-        .formStyle(.grouped)
+
+        Section {
+            ForEach(settings.watchedFolders, id: \.self) { folder in
+                LabeledContent {
+                    Button("Remove") { model.removeWatchedFolder(folder) }.controlSize(.small)
+                } label: {
+                    Label((folder as NSString).abbreviatingWithTildeInPath, systemImage: "folder")
+                        .lineLimit(1)
+                        .truncationMode(.head)
+                }
+            }
+            LabeledContent {
+                Button("Add Folder…") { chooseWatchedFolder() }.controlSize(.small)
+            } label: {
+                Text("A folder that holds your clones")
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text("Watched Folders")
+        } footer: {
+            Footnote("Clones added to a watched folder show up in FetchBar on their own. Nothing is removed for you.")
+        }
     }
 
     /// Picks a folder whose clones should be added automatically.

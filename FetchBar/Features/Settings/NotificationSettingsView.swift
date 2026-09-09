@@ -7,27 +7,31 @@ struct NotificationSettingsView: View {
 
     var body: some View {
         @Bindable var settings = model.settings
-        Form {
+        Group {
             Section {
                 Toggle("Notify me about new commits", isOn: $settings.notificationsEnabled)
                     .onChange(of: settings.notificationsEnabled) { _, enabled in
                         if enabled { Task { await notifications.ensureAuthorized() } }
                     }
                 if settings.notificationsEnabled && notifications.authorizationStatus == .denied {
-                    HStack {
-                        Text("Notifications are disabled for FetchBar in System Settings.").font(.caption).foregroundStyle(.secondary)
-                        Spacer()
-                        Button("Open") {
+                    LabeledContent {
+                        Button("Open Notifications") {
                             if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") {
                                 NSWorkspace.shared.open(url)
                             }
-                        }.controlSize(.small)
+                        }
+                        .controlSize(.small)
+                    } label: {
+                        Text("Notifications are turned off for FetchBar in System Settings")
+                            .foregroundStyle(.secondary)
                     }
                 }
+            } footer: {
+                Footnote("One notification per repository when commits land, with Open and Pull on it. The same commits never notify you twice.")
             }
 
             if settings.notificationsEnabled {
-                Section("Unpushed Commits") {
+                Section {
                     Toggle("Remind me about unpushed commits", isOn: $settings.unpushedReminderEnabled)
                     if settings.unpushedReminderEnabled {
                         Picker("After", selection: $settings.unpushedReminderHours) {
@@ -35,23 +39,23 @@ struct NotificationSettingsView: View {
                                 Text(Self.hoursLabel(hours)).tag(hours)
                             }
                         }
-                        Text("Repeats at most once a day while the branch stays ahead. FetchBar never pushes for you.")
-                            .font(.caption).foregroundStyle(.secondary)
                     }
+                } header: {
+                    Text("Unpushed Commits")
+                } footer: {
+                    Footnote("Repeats at most once a day while the branch stays ahead. FetchBar never pushes for you.")
                 }
 
-                Section("Silence") {
+                Section {
                     if let until = model.snoozedUntilLabel {
-                        HStack {
-                            Image(systemName: "bell.slash.fill").foregroundStyle(.secondary)
-                            Text("Silenced until \(until)")
-                            Spacer()
-                            Button("Turn Back On") { model.resumeNotifications() }.controlSize(.small)
+                        LabeledContent {
+                            Button("Turn Back On") { model.resumeNotifications() }
+                                .controlSize(.small)
+                        } label: {
+                            Label("Silenced until \(until)", systemImage: "bell.slash.fill")
                         }
                     } else {
-                        HStack {
-                            Text("Silence every repository for a while.").font(.caption).foregroundStyle(.secondary)
-                            Spacer()
+                        LabeledContent {
                             Menu("Silence…") {
                                 ForEach(MuteWindow.allCases, id: \.self) { window in
                                     Button(window.title.capitalizedFirst) { model.snoozeNotifications(for: window.duration()) }
@@ -59,14 +63,17 @@ struct NotificationSettingsView: View {
                             }
                             .fixedSize()
                             .controlSize(.small)
+                        } label: {
+                            Text("Silence every repository for a while")
                         }
                     }
-                    Text("A single repository can be muted from its row in the panel.")
-                        .font(.caption).foregroundStyle(.tertiary)
+                } header: {
+                    Text("Silence")
+                } footer: {
+                    Footnote("A timed silence lifts itself. A single repository can be muted from its row in the panel.")
                 }
             }
         }
-        .formStyle(.grouped)
         .onAppear { notifications.refreshAuthorizationStatus() }
     }
 

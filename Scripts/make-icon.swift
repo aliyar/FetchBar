@@ -1,5 +1,7 @@
 #!/usr/bin/env swift
-// Generates the AppIcon PNG set: a rounded gradient square with the branch glyph.
+// Generates the AppIcon PNG set (a rounded gradient square with the branch glyph) and the
+// background of the disk image people download, into Design/DMG (always relative to the
+// working directory, which is the repository root).
 // Usage: swift Scripts/make-icon.swift [output-appiconset-dir]
 import AppKit
 
@@ -91,3 +93,65 @@ let contents: [String: Any] = ["images": images, "info": ["author": "xcode", "ve
 let json = try JSONSerialization.data(withJSONObject: contents, options: [.prettyPrinted, .sortedKeys])
 try json.write(to: output.appendingPathComponent("Contents.json"))
 print("wrote \(images.count) icons to \(output.path)")
+
+// MARK: The disk image's window
+
+// The window is 660 by 400 points and the icons are 128 points, centred where
+// Scripts/release.sh puts them: the app at (165, 180) and Applications at (495, 180),
+// counted from the top left as the Finder counts. The one thing the window has to say is
+// said above them, as a heading; nothing is drawn where an icon or its label will be, and
+// nothing in the bottom hundred points, which a Finder showing its path bar or status bar
+// covers.
+let dmgWindow = NSSize(width: 660, height: 400)
+
+func dmgBackground(scale: CGFloat) -> Data? {
+    let width = Int(dmgWindow.width * scale), height = Int(dmgWindow.height * scale)
+    guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: width, pixelsHigh: height, bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else { return nil }
+    rep.size = dmgWindow
+    NSGraphicsContext.saveGraphicsState()
+    NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+    NSGraphicsContext.current?.imageInterpolation = .high
+
+    // The Finder counts from the top; AppKit draws from the bottom.
+    func y(_ fromTop: CGFloat) -> CGFloat { dmgWindow.height - fromTop }
+
+    NSColor(srgbRed: 0xF2 / 255, green: 0xF2 / 255, blue: 0xF4 / 255, alpha: 1).setFill()
+    NSRect(origin: .zero, size: dmgWindow).fill()
+
+    let indigo = NSColor(srgbRed: 0x4A / 255, green: 0x5C / 255, blue: 0xF2 / 255, alpha: 1)
+    let slate = NSColor(srgbRed: 0x2A / 255, green: 0x2D / 255, blue: 0x36 / 255, alpha: 1)
+
+    // The arrow, between the two icons and clear of both.
+    let arrow = NSBezierPath()
+    arrow.lineWidth = 5
+    arrow.lineCapStyle = .round
+    arrow.lineJoinStyle = .round
+    arrow.move(to: NSPoint(x: 252, y: y(180)))
+    arrow.line(to: NSPoint(x: 404, y: y(180)))
+    arrow.move(to: NSPoint(x: 382, y: y(158)))
+    arrow.line(to: NSPoint(x: 406, y: y(180)))
+    arrow.line(to: NSPoint(x: 382, y: y(202)))
+    indigo.setStroke()
+    arrow.stroke()
+
+    // Above the icons, where a heading goes.
+    let paragraph = NSMutableParagraphStyle()
+    paragraph.alignment = .center
+    let caption = NSAttributedString(string: "Drag FetchBar into Applications, then open it from there.", attributes: [
+        .font: NSFont.systemFont(ofSize: 17, weight: .medium),
+        .foregroundColor: slate.withAlphaComponent(0.82),
+        .paragraphStyle: paragraph,
+    ])
+    caption.draw(with: NSRect(x: 40, y: y(66), width: dmgWindow.width - 80, height: 24), options: [.usesLineFragmentOrigin])
+
+    NSGraphicsContext.restoreGraphicsState()
+    return rep.representation(using: .png, properties: [:])
+}
+
+let dmgDirectory = URL(fileURLWithPath: "Design/DMG", isDirectory: true)
+try? FileManager.default.createDirectory(at: dmgDirectory, withIntermediateDirectories: true)
+for (name, scale) in [("background.png", CGFloat(1)), ("background@2x.png", CGFloat(2))] {
+    guard let data = dmgBackground(scale: scale) else { continue }
+    try data.write(to: dmgDirectory.appendingPathComponent(name))
+}
+print("wrote the disk image background to \(dmgDirectory.path)")

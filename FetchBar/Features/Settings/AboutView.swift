@@ -1,68 +1,48 @@
 import SwiftUI
 
 struct AboutView: View {
-    @Environment(UpdateController.self) private var updates
-
-    private var build: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
+    var body: some View {
+        AboutPane(website: SettingsView.website, extra: AnyView(extra))
     }
 
-    var body: some View {
-        @Bindable var updates = updates
-        VStack(spacing: 14) {
-            Image(nsImage: NSApp.applicationIconImage)
-                .resizable()
-                .frame(width: 72, height: 72)
-            VStack(spacing: 3) {
-                Text("FetchBar").font(.title2.weight(.semibold))
-                Text("Version \(updates.currentVersion) (\(build))").font(.caption).foregroundStyle(.secondary)
-            }
-            Text("Keeps an eye on your local git repositories and tells you when the remote has new commits.")
-                .font(.callout)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: 320)
-
-            GroupBox {
-                VStack(alignment: .leading, spacing: 8) {
-                    if let version = updates.availableVersion {
-                        HStack {
-                            Label("FetchBar \(version) is available", systemImage: "sparkles")
-                                .foregroundStyle(Color.accentColor)
-                            Spacer()
-                            Button("Install…") { updates.checkForUpdates() }
-                                .keyboardShortcut(.defaultAction)
-                        }
-                    } else {
-                        HStack {
-                            Button("Check for Updates…") { updates.checkForUpdates() }
-                                .disabled(!updates.canCheckForUpdates)
-                            Spacer()
-                            if let date = updates.lastCheckDate {
-                                RelativeTimeText(date: date, prefix: "Last checked ")
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    Toggle("Check for updates automatically", isOn: $updates.automaticallyChecksForUpdates)
-                        .font(.callout)
-                }
-                .padding(4)
-            }
-            .frame(maxWidth: 360)
-
-            HStack(spacing: 16) {
-                Link("Website", destination: URL(string: "https://fetchbar.greatpixels.com")!)
-                Link("GitHub", destination: URL(string: "https://github.com/aliyar/FetchBar")!)
-                Link("Report an Issue", destination: URL(string: "https://github.com/aliyar/FetchBar/issues")!)
-            }
-            .font(.callout)
-            Text("Tip: right-click the menu bar icon for quick actions.")
-                .font(.caption2).foregroundStyle(.tertiary)
-            Text(Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as? String ?? "")
-                .font(.caption2).foregroundStyle(.tertiary)
+    /// What About adds to the pane every app in the family shares: where the source is,
+    /// and the one control people come to About for.
+    @ViewBuilder
+    private var extra: some View {
+        LabeledContent("Source") {
+            Link("github.com/aliyar/FetchBar", destination: URL(string: "https://github.com/aliyar/FetchBar")!)
         }
-        .padding(28)
-        .frame(maxWidth: .infinity)
+        LabeledContent("License") { Text("MIT") }
+        UpdateCheckRow()
+    }
+}
+
+/// Checking for updates, and what came of the last check. Shown in General under Updates
+/// and again in About, where people look for it.
+struct UpdateCheckRow: View {
+    @Environment(UpdateController.self) private var updates
+
+    var body: some View {
+        if let version = updates.availableVersion {
+            LabeledContent {
+                Button("Install…") { updates.checkForUpdates() }
+                    .keyboardShortcut(.defaultAction)
+            } label: {
+                Label("FetchBar \(version) is available", systemImage: "sparkles")
+                    .foregroundStyle(Color.accentColor)
+            }
+        } else {
+            LabeledContent {
+                Button("Check for Updates…") { updates.checkForUpdates() }
+                    .disabled(!updates.canCheckForUpdates)
+            } label: {
+                if let date = updates.lastCheckDate {
+                    RelativeTimeText(date: date, prefix: "Last checked ")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Not checked yet").foregroundStyle(.secondary)
+                }
+            }
+        }
     }
 }

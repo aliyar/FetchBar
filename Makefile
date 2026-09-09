@@ -6,7 +6,7 @@ APP_PATH := $(DD)/Build/Products/$(CONFIG)/$(APP).app
 XCB      := xcodebuild -project $(APP).xcodeproj -scheme $(SCHEME) -destination 'platform=macOS' -derivedDataPath $(DD)
 PKG      := Packages/FetchBarKit
 
-.PHONY: generate spec build run stop test test-engine test-app screenshots site site-assets site-build site-check open logs clean release release-dry help
+.PHONY: generate spec build run stop test test-engine test-app screenshots icon site site-assets site-build site-check open logs clean release release-dry help
 
 help:                ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-12s %s\n", $$1, $$2}'
@@ -36,7 +36,7 @@ test-app: generate   ## Run app-layer tests via xcodebuild
 	$(XCB) -configuration Debug test -only-testing:FetchBarTests -quiet
 
 site:                ## Serve the landing page locally at http://localhost:8099
-	@echo "http://localhost:8099 — ctrl-c to stop"
+	@echo "http://localhost:8099 · ctrl-c to stop"
 	python3 -m http.server 8099 --directory site
 
 site-build:          ## Inject the shared header/footer from Scripts/site-partials into site/*.html
@@ -53,6 +53,9 @@ screenshots: generate ## Render README screenshots into docs/screenshots from th
 	echo "$(abspath docs/screenshots)" > build/screenshot-dir
 	$(XCB) -configuration Debug test -only-testing:FetchBarTests/ScreenshotTests -quiet; status=$$?; rm -f build/screenshot-dir; exit $$status
 	@ls docs/screenshots
+
+icon:                ## Regenerate the AppIcon set and the disk image background
+	swift Scripts/make-icon.swift
 
 open: generate       ## Open the project in Xcode
 	open $(APP).xcodeproj
