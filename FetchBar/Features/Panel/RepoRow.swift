@@ -212,6 +212,14 @@ struct RepoRow: View {
         .padding(.bottom, 8)
     }
 
+    /// Closes the row once its commits are dealt with: the list they showed is gone, and
+    /// leaving the row open pushes every other repository down for nothing. Deliberately not
+    /// inside `AppModel.markSeen`, which the expand gesture itself calls when "mark as seen
+    /// on expand" is on: collapsing there would shut the row the moment it opened.
+    private func collapse() {
+        withAnimation(animation) { _ = ui.expanded.remove(item.id) }
+    }
+
     private var pullDisabledReason: String? {
         do {
             try PullService.preflight(snapshot: item.snapshot)
@@ -224,11 +232,14 @@ struct RepoRow: View {
     private var actionRow: some View {
         HStack(spacing: 8) {
             let reason = pullDisabledReason
-            Button("Pull") { model.pull(item.id) }
+            Button("Pull") { model.pull(item.id) { collapse() } }
                 .disabled(reason != nil)
                 .help(reason ?? "Fast-forward the current branch (no merge commits)")
             if item.unseen > 0 {
-                Button("Mark as seen") { model.markSeen(item.id) }
+                Button("Mark as seen") {
+                    model.markSeen(item.id)
+                    collapse()
+                }
             }
             Spacer()
             openMenu
@@ -277,9 +288,12 @@ struct RepoRow: View {
         Divider()
         Button("Check Now") { model.refresh(item.id) }
         if item.unseen > 0 {
-            Button("Mark as Seen") { model.markSeen(item.id) }
+            Button("Mark as Seen") {
+                model.markSeen(item.id)
+                collapse()
+            }
         }
-        Button("Pull (fast-forward)") { model.pull(item.id) }
+        Button("Pull (fast-forward)") { model.pull(item.id) { collapse() } }
             .disabled(pullDisabledReason != nil)
         Divider()
         Menu("Color") {

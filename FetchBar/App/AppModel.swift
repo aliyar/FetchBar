@@ -289,11 +289,14 @@ final class AppModel {
         Task { await engine.update(record) }
     }
 
-    func pull(_ id: RepoID) {
+    /// `onSuccess` runs only when the pull actually happened, so a refusal leaves the panel
+    /// showing the row that explains it.
+    func pull(_ id: RepoID, onSuccess: (() -> Void)? = nil) {
         Task {
             do {
                 let result = try await engine.pull(id)
                 showToast("Pulled \(result.commitCount) \(result.commitCount == 1 ? "commit" : "commits")", kind: .success)
+                onSuccess?()
             } catch let error as EngineError {
                 showToast(error.message, kind: .failure)
             } catch {
