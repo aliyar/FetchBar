@@ -14,14 +14,14 @@ public enum PullRefusal: Error, Sendable, Hashable {
     public var message: String {
         switch self {
         case .noSnapshot: "Check the repository first."
-        case .detachedHead: "HEAD is detached — check out a branch first."
+        case .detachedHead: "HEAD is detached. Check out a branch first."
         case .unbornBranch: "The current branch has no commits yet."
         case .notWatchingUpstream: "Pull only works for the checked-out branch's upstream."
         case .nothingToPull: "Already up to date."
-        case .diverged: "Local branch has diverged — pull manually (merge or rebase)."
-        case .workingTreeDirty: "Working tree has changes — commit or stash first."
-        case .headMoved: "The checked-out branch changed since the last check — check again first."
-        case .operationInProgress(let what): "A \(what) is in progress — finish or abort it first."
+        case .diverged: "Local branch has diverged. Pull manually (merge or rebase)."
+        case .workingTreeDirty: "Working tree has changes. Commit or stash first."
+        case .headMoved: "The checked-out branch changed since the last check. Check again first."
+        case .operationInProgress(let what): "A \(what) is in progress. Finish or abort it first."
         }
     }
 }

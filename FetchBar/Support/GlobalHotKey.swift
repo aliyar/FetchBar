@@ -6,7 +6,7 @@ import OSLog
 ///
 /// Carbon is used on purpose: it needs no Accessibility permission, which
 /// `NSEvent.addGlobalMonitorForEvents` would, and it keeps working while another
-/// app is frontmost — the whole point of the shortcut for an accessory app.
+/// app is frontmost, which is the whole point of the shortcut for an accessory app.
 @MainActor
 final class GlobalHotKey {
     /// A recorded shortcut. `keyCode` is a virtual key code, `modifiers` are Cocoa flags.

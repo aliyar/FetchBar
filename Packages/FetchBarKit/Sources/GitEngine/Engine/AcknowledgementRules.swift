@@ -48,8 +48,8 @@ public enum AcknowledgementRules {
     /// long a branch may stay ahead before the first reminder; the reminder then repeats
     /// at most once a day so a long-lived branch does not nag.
     /// `trackingUpstream` must be true: `ahead` counts HEAD against the *watched* ref, which is
-    /// only the branch's own upstream in upstream mode. Watching a different branch — or having
-    /// no upstream at all — makes every commit on HEAD look unpushed when it is not.
+    /// only the branch's own upstream in upstream mode. Watching a different branch, or having
+    /// no upstream at all, makes every commit on HEAD look unpushed when it is not.
     public static func shouldRemindAboutUnpushed(
         ahead: Int,
         aheadSince: Date?,

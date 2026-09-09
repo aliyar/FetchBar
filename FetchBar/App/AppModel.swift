@@ -85,12 +85,12 @@ final class AppModel {
 
     /// Header status line.
     var statusLine: String {
-        if gitMissing { return "git not found — open Settings" }
+        if gitMissing { return "git not found · open Settings" }
         if isPaused {
             if let pausedUntil { return "Paused until \(Self.untilLabel(pausedUntil))" }
             return "Paused"
         }
-        if !isOnline { return "Offline — will retry" }
+        if !isOnline { return "Offline · will retry" }
         if isRefreshing { return "Checking…" }
         if records.isEmpty { return "No repositories" }
         let changed = unseenRepoCount
@@ -220,7 +220,7 @@ final class AppModel {
         return Self.untilLabel(until)
     }
 
-    /// "2:30 PM" today, "tomorrow 9:00 AM" past midnight — a bare time is ambiguous
+    /// "2:30 PM" today, "tomorrow 9:00 AM" past midnight, because a bare time is ambiguous
     /// for anything that runs overnight, which is what people forget about.
     nonisolated static func untilLabel(_ date: Date, calendar: Calendar = .current) -> String {
         let time = date.formatted(date: .omitted, time: .shortened)

@@ -13,7 +13,7 @@ final class RecordingProcessRunner: ProcessRunning, Sendable {
         var duration: Duration = .zero
     }
 
-    /// Slows one git subcommand down so a test can act while a check is genuinely in flight —
+    /// Slows one git subcommand down so a test can act while a check is genuinely in flight,
     /// the only way to reach the engine's "while a check is running" paths from outside.
     func hold(_ subcommand: String, for duration: Duration) {
         held.withLock { $0 = Hold(subcommand: subcommand, duration: duration) }

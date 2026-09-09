@@ -210,7 +210,7 @@ final class ProcessControl: Sendable {
         }
     }
 
-    /// SIGTERM — git removes its `*.lock` files on SIGTERM, so prefer this over SIGKILL.
+    /// SIGTERM: git removes its `*.lock` files on SIGTERM, so prefer this over SIGKILL.
     func terminate() {
         state.withLock { state in
             state.cancelRequested = true

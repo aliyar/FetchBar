@@ -1,4 +1,4 @@
-/* FetchBar site — the menu bar demo, scroll reveals and the copy button.
+/* FetchBar site: the menu bar demo, scroll reveals and the copy button.
    No dependencies, no inline styles (the host sends script-src 'self'; style-src 'self'). */
 
 /* Google Analytics, configured here rather than in a <script> block on the page: the host

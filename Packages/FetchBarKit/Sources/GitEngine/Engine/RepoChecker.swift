@@ -237,7 +237,7 @@ public struct RepoChecker: Sendable {
 
             // 8. Incoming commits
             // `headSHA` whatever picked the watched ref: the list is "commits HEAD does not have",
-            // which is the same question — and the same number as the row's behind count — whether
+            // which is the same question, and the same number as the row's behind count, whether
             // the ref came from the upstream or from a branch the user pinned by name.
             snapshot.incoming = try await incomingCommits(
                 in: repo, tip: tipSHA, headSHA: headSHA,

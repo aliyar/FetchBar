@@ -23,7 +23,7 @@ public enum EngineEvent: Sendable {
     case snapshot(RepoID, RepoSnapshot)
     case removed(RepoID)
     case gitInstallation(GitInstallation?)
-    /// A snapshot changed because it was acknowledged, not because a check produced it —
+    /// A snapshot changed because it was acknowledged, not because a check produced it,
     /// the UI must update the rows without treating this as "the check finished".
     case acknowledged(RepoID, RepoSnapshot)
     /// The engine decided a user notification is warranted for this check.
@@ -47,7 +47,7 @@ public enum EngineError: Error, Sendable {
         switch self {
         case .gitNotFound: "git was not found. Set its path in Settings › Advanced."
         case .notARepository(let detail): detail.isEmpty ? "Not a git repository." : detail
-        case .bareRepository: "Bare repositories are not supported — add a working copy."
+        case .bareRepository: "Bare repositories are not supported. Add a working copy."
         case .alreadyAdded(let record): "\(record.name) is already in the list."
         case .unknownRepository: "Repository not found."
         case .pullRefused(let refusal): refusal.message
@@ -152,7 +152,7 @@ public actor RepoEngine {
 
     public func relocateGit() async {
         // Settings › Advanced offers extra PATH entries; they were only added to the
-        // environment git runs in, so a git that lives in one of them was never found —
+        // environment git runs in, so a git that lives in one of them was never found,
         // the user had to give a full path override instead.
         let extra = settings.extraPaths.map { URL(fileURLWithPath: $0).appendingPathComponent("git") }
         let locator = GitLocator(runner: runner, extraCandidates: extra)
@@ -213,7 +213,7 @@ public actor RepoEngine {
         guard records.contains(where: { $0.id == id }) else { return }
         if inFlight[id] != nil {
             // The running check captured its record and its options before this trigger existed,
-            // so its result cannot answer it — a watch change would otherwise be silently lost
+            // so its result cannot answer it, and a watch change would otherwise be silently lost
             // until the next interval. Remember it and re-run once the check is done.
             if queuedRecheck[id]?.isManual != true { queuedRecheck[id] = reason }
             return
@@ -278,7 +278,7 @@ public actor RepoEngine {
         let now = Date()
         // The check captured its record when it started, up to a fetch timeout ago. Mute,
         // rename and the rest must be read live, or muting a repository while its check is
-        // in flight still produces a notification — under the old name, if it was renamed.
+        // in flight still produces a notification, under the old name if it was renamed.
         let record = records.first { $0.id == captured.id } ?? captured
         let previous = states[record.id] ?? RepoState()
         var state = outcome.state

@@ -256,7 +256,7 @@ struct RepoEngineTests {
     }
 
     /// Settings › Advanced offers extra PATH entries, but they only reached the environment
-    /// git ran in — a git living in one of them was never found, so "git not found" stayed
+    /// git ran in: a git living in one of them was never found, so "git not found" stayed
     /// on screen unless the user gave a full path override instead.
     @Test func extraPathsAreSearchedForGit() async throws {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent("fetchbar-extrapath-\(UUID().uuidString)")

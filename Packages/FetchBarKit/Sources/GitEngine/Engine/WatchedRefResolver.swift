@@ -137,7 +137,7 @@ public struct WatchedRefResolver: Sendable {
         }
         resolution.watched = watched
         // The query above asks for the remote's whole namespace, so every tracking ref that
-        // exists is already in `refs` — including the ones ls-remote or an override chose.
+        // exists is already in `refs`, including the ones ls-remote or an override chose.
         resolution.localTrackingSHA = sha(of: watched.trackingRef)
         return resolution
     }

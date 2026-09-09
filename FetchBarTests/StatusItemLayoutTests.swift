@@ -68,12 +68,12 @@ struct StatusItemLayoutTests {
 
     @Test func summaryText() {
         var state = MenuBarState(repos: dots([(.red, 1, false), (.blue, 0, false), (.green, 0, false), (.orange, 0, true), (.purple, 4, false)]))
-        #expect(state.summary == "FetchBar — 2 of 5 repositories have new commits (some checks failed)")
+        #expect(state.summary == "FetchBar · 2 of 5 repositories have new commits (some checks failed)")
         state.repos = dots([(.red, 0, false)])
-        #expect(state.summary == "FetchBar — all 1 repositories up to date")
+        #expect(state.summary == "FetchBar · all 1 repositories up to date")
         state.isPaused = true
-        #expect(state.summary == "FetchBar — paused")
-        #expect(MenuBarState().summary == "FetchBar — no repositories")
+        #expect(state.summary == "FetchBar · paused")
+        #expect(MenuBarState().summary == "FetchBar · no repositories")
     }
 }
 

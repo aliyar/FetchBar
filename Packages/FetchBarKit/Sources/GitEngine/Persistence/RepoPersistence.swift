@@ -59,7 +59,7 @@ public actor RepoPersistence {
 
     /// Reads and decodes, with one retry. Two instances of the app share these files across a
     /// rebuild-and-relaunch, and a read that lands inside the other one's replace has failed on
-    /// bytes that decode perfectly a moment later — twice in one night on a state.json that still
+    /// bytes that decode perfectly a moment later, twice in one night on a state.json that still
     /// decodes today. Only a file that is undecodable on the second attempt is moved aside, and a
     /// file we merely could not *read* is left where it is: condemning one costs every
     /// repository's seen ledger, and an unreadable file is often readable next launch.
@@ -76,7 +76,7 @@ public actor RepoPersistence {
         }
         guard let failure else { return nil }
         // Not `localizedDescription`: for a DecodingError it says "The data couldn't be read
-        // because it is missing.", dropping the one thing worth having — which key, in which
+        // because it is missing.", dropping the one thing worth having: which key, in which
         // repository, went wrong.
         let detail = String(describing: failure)
         guard failure is DecodingError else {
@@ -119,7 +119,7 @@ public actor RepoPersistence {
         return encoder
     }()
 
-    /// Same dates, no indentation — for the file that is rewritten on every check.
+    /// Same dates, no indentation, for the file that is rewritten on every check.
     private static let compactEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom { date, encoder in

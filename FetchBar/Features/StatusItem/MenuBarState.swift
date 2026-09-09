@@ -63,14 +63,14 @@ nonisolated struct MenuBarState: Equatable, Sendable {
 
     /// Human-readable summary used for the tooltip and accessibility label.
     var summary: String {
-        if isPaused { return "FetchBar — paused" }
-        if repos.isEmpty { return "FetchBar — no repositories" }
+        if isPaused { return "FetchBar · paused" }
+        if repos.isEmpty { return "FetchBar · no repositories" }
         let changed = unseenRepoCount
         var text = changed == 0
-            ? "FetchBar — all \(repos.count) repositories up to date"
-            : "FetchBar — \(changed) of \(repos.count) repositories have new commits"
+            ? "FetchBar · all \(repos.count) repositories up to date"
+            : "FetchBar · \(changed) of \(repos.count) repositories have new commits"
         if hasError { text += " (some checks failed)" }
-        if isOffline { text += " — offline" }
+        if isOffline { text += " · offline" }
         return text
     }
 
@@ -82,7 +82,7 @@ nonisolated struct MenuBarState: Equatable, Sendable {
         return MenuBarState(repos: dots)
     }()
 
-    /// The sample scenario drawn with someone's own display settings — what the Settings
+    /// The sample scenario drawn with someone's own display settings: what the Settings
     /// preview shows, so switching style or dot options changes the picture immediately.
     static func sample(styledLike settings: MenuBarState) -> MenuBarState {
         var state = sample

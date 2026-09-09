@@ -1,6 +1,6 @@
 import Foundation
 
-/// The choices offered wherever notifications can be silenced for a while — the
+/// The choices offered wherever notifications can be silenced for a while: the
 /// footer's global menu and a repository's own Notifications menu.
 nonisolated enum MuteWindow: String, CaseIterable, Sendable {
     case hour, fourHours, tomorrowMorning

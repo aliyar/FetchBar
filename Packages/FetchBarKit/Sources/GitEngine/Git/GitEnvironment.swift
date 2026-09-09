@@ -21,7 +21,7 @@ public enum GitEnvironment {
     ///   - base: usually `ProcessInfo.processInfo.environment` (keeps HOME, USER, TMPDIR, SSH_AUTH_SOCK…).
     ///   - gitExecutable: its directory is put first on PATH so helpers next to it resolve.
     ///   - extraPaths: user-configured additional PATH entries (Settings › Advanced).
-    ///   - sshBatchMode: set `GIT_SSH_COMMAND` with BatchMode — only when the user has not configured
+    ///   - sshBatchMode: set `GIT_SSH_COMMAND` with BatchMode, only when the user has not configured
     ///     `core.sshCommand`/`GIT_SSH_COMMAND` themselves (the env var would override their setting).
     ///   - fileManager: for existence checks (injected in tests).
     public static func make(

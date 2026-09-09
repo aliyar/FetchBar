@@ -3,7 +3,7 @@ import Foundation
 /// Parsed `git status --porcelain=v2 --branch -z` output.
 public struct StatusV2: Sendable, Hashable {
     public var head: HeadState
-    /// Short upstream name as git prints it (e.g. "origin/main"); ambiguous to split — use for-each-ref instead.
+    /// Short upstream name as git prints it (e.g. "origin/main"); ambiguous to split, so use for-each-ref instead.
     public var upstream: String?
     /// Present only when the upstream is configured *and* its commit exists locally.
     public var aheadBehind: BranchComparison?

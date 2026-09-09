@@ -22,7 +22,7 @@ public struct GitInstallation: Sendable, Hashable, Codable {
     /// `git fetch --porcelain` exists since 2.41.
     public var supportsFetchPorcelain: Bool { isAtLeast(2, 41) }
     /// Hard floor: `rev-parse --path-format=absolute`, used by validate() and pull(), landed in
-    /// 2.31. Older git does not reject the unknown flag — it echoes it as an extra first line
+    /// 2.31. Older git does not reject the unknown flag; it echoes it as an extra first line
     /// and exits 0, so every parsed field shifts by one and repositories register as "/false".
     public var isSupported: Bool { isAtLeast(2, 31) }
 
@@ -74,7 +74,7 @@ public struct GitLocator: Sendable {
 
     public func locate(override: URL?) async -> GitInstallation? {
         // The fixed candidates cover almost every Mac, so the xcode-select subprocess is only
-        // paid for when none of them worked — `candidates` runs it eagerly.
+        // paid for when none of them worked, because `candidates` runs it eagerly.
         var tried = Set<String>()
         for candidate in fixedList(override: override) where tried.insert(candidate.path).inserted {
             guard fileManager.isExecutableFile(atPath: candidate.path) else { continue }

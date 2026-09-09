@@ -2,7 +2,7 @@
 """Injects the shared blocks in Scripts/site-partials/ into the pages under site/.
 
 The site is plain static HTML with no framework, so every page carried its own copy
-of the footer and the top bar — and they drifted apart (four pages still claimed
+of the footer and the top bar, and they drifted apart (four pages still claimed
 version 0.1.0 long after 0.3.0 shipped).
 
 Pages mark where a partial goes:

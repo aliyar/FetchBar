@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// "just now", "2 min. ago", "yesterday" — refreshes every 30 s.
+/// "just now", "2 min. ago", "yesterday". Refreshes every 30 s.
 struct RelativeTimeText: View {
     let date: Date
     var prefix: String = ""

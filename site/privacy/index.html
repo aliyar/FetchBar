@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Privacy — FetchBar</title>
+<title>Privacy · FetchBar</title>
 <meta name="description" content="FetchBar has no account, no telemetry and no backend. What the app and this website do and do not collect.">
 <link rel="canonical" href="https://fetchbar.greatpixels.com/privacy/">
 <meta name="robots" content="index, follow">
@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0C0C0F" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="FetchBar">
-<meta property="og:title" content="Privacy — FetchBar">
+<meta property="og:title" content="Privacy · FetchBar">
 <meta property="og:description" content="FetchBar has no account, no telemetry and no backend. What the app and this website do and do not collect.">
 <meta property="og:url" content="https://fetchbar.greatpixels.com/privacy/">
 <meta property="og:image" content="https://fetchbar.greatpixels.com/assets/og.jpg">
@@ -70,11 +70,11 @@
     <p>The short version: <b>FetchBar has no backend, no account and no telemetry.</b> Nothing about you, your repositories or your usage is collected, transmitted to us, or stored anywhere but on your own Mac.</p>
 
     <h2>What the app stores, and where</h2>
-    <p>FetchBar keeps two JSON files in <span class="mono">~/Library/Application Support/FetchBar/</span>: the list of repositories you added, and a cache of the last check for each of them. Settings live in macOS user defaults. Delete those files and FetchBar starts empty. Nothing is stored anywhere else, and nothing is encrypted-and-uploaded — there is nowhere to upload it to.</p>
+    <p>FetchBar keeps two JSON files in <span class="mono">~/Library/Application Support/FetchBar/</span>: the list of repositories you added, and a cache of the last check for each of them. Settings live in macOS user defaults. Delete those files and FetchBar starts empty. Nothing is stored anywhere else, and nothing is encrypted-and-uploaded, because there is nowhere to upload it to.</p>
 
     <h2>What the app sends over the network</h2>
     <ul>
-      <li><b>Your own git remotes.</b> Checks run the <span class="mono">git</span> binary on your machine against the remotes your repositories already point at, using your existing SSH keys, ssh-agent and credential helpers. Those requests go to your git host — GitHub, GitLab, your own server — exactly as they would from your terminal. We never see them.</li>
+      <li><b>Your own git remotes.</b> Checks run the <span class="mono">git</span> binary on your machine against the remotes your repositories already point at, using your existing SSH keys, ssh-agent and credential helpers. Those requests go to your git host (GitHub, GitLab, your own server) exactly as they would from your terminal. We never see them.</li>
       <li><b>An update check.</b> Once a day FetchBar asks GitHub for a small file listing the latest version. That request tells GitHub your IP address and the app's user agent, as any download would. You can turn automatic checks off in Settings → About, and the app keeps working.</li>
     </ul>
     <p>That is the complete list. There is no analytics SDK, no crash reporter, no advertising identifier and no A/B testing.</p>

@@ -201,7 +201,7 @@ struct RepoRow: View {
                         .padding(.horizontal, 10)
                 }
                 if snapshot.isShallow {
-                    Text("Shallow clone — the commit list may be incomplete").font(.caption2).foregroundStyle(.tertiary).padding(.horizontal, 10)
+                    Text("Shallow clone, so the commit list may be incomplete").font(.caption2).foregroundStyle(.tertiary).padding(.horizontal, 10)
                 }
                 if snapshot.historyRewritten {
                     Text("Remote history was rewritten (force push)").font(.caption2).foregroundStyle(.orange).padding(.horizontal, 10)
@@ -263,7 +263,7 @@ struct RepoRow: View {
 
     @ViewBuilder
     private var contextMenu: some View {
-        // One flat entry — the app this repository was last opened with, the same one the
+        // One flat entry: the app this repository was last opened with, the same one the
         // row's split button offers. Listing Finder and every terminal flat grew a row per
         // installed terminal and said nothing about which one you actually use.
         let activeApp = model.openApp(for: item.id)
@@ -356,7 +356,7 @@ struct RepoRow: View {
             ForEach(apps) { app in
                 // A Toggle puts the tick in the menu's shared state column. Drawing it as a
                 // Label's image reserved an icon slot instead, and only in the block that
-                // held the active app — which indented that block past all the others.
+                // held the active app, which indented that block past all the others.
                 Toggle(isOn: Binding(
                     get: { app == activeApp },
                     set: { _ in model.closePanel?(); model.open(item.id, in: app) }
@@ -438,7 +438,7 @@ struct RepoRow: View {
     }
 
     /// The checked-out branch, but only when it is on the remote and is not the branch
-    /// being watched — a pull request from the branch you track would compare nothing.
+    /// being watched: a pull request from the branch you track would compare nothing.
     private var pullRequestBranch: String? {
         guard let snapshot = item.snapshot,
               let branch = snapshot.head?.branchName,

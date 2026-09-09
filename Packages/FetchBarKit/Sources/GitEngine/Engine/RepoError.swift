@@ -48,7 +48,7 @@ public enum RepoError: Codable, Sendable, Hashable {
         case .localChangesWouldBeOverwritten: "Pull refused: local changes would be overwritten"
         case .operationInProgress: "Merge or rebase in progress"
         case .noDefaultBranch: "Could not determine the remote's default branch"
-        case .ambiguousRemote(let remotes): "Several remotes (\(remotes.joined(separator: ", "))) — choose one"
+        case .ambiguousRemote(let remotes): "Several remotes (\(remotes.joined(separator: ", "))): choose one"
         case .unknown(let line): line
         }
     }

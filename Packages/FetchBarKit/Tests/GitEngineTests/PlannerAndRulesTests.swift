@@ -108,7 +108,7 @@ struct UnpushedReminderTests {
     @Test func onlyWhenAheadIsMeasuredAgainstTheBranchesOwnUpstream() {
         #expect(remind(trackingUpstream: true))
         // Watching another branch, or having no upstream: `ahead` counts commits that are
-        // pushed — reminding about them is wrong.
+        // pushed, so reminding about them is wrong.
         #expect(!remind(trackingUpstream: false))
     }
 
@@ -283,7 +283,7 @@ struct RepoPersistenceTests {
 
     /// A file we could not read is not a file that is broken. Condemning one costs every
     /// repository's seen ledger, and it happened twice in one night to a state.json that decodes
-    /// cleanly — so only a decoding failure moves a file aside.
+    /// cleanly, so only a decoding failure moves a file aside.
     @Test func anUnreadableFileIsLeftInPlace() async throws {
         let dir = tempDir()
         defer { try? FileManager.default.removeItem(at: dir) }

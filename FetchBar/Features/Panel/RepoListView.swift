@@ -107,7 +107,7 @@ struct RepoListView: View {
     @ViewBuilder
     private func rows(_ items: [RepoItem]) -> some View {
         // A plain VStack on purpose. A LazyVStack sizes itself from the visible rect, which makes
-        // the measured height depend on the scroll view's frame — and that frame comes from the
+        // the measured height depend on the scroll view's frame, and that frame comes from the
         // measurement, closing a layout feedback loop that spins the main thread forever.
         VStack(spacing: 1) {
             ForEach(items) { item in

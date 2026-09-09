@@ -196,7 +196,7 @@ public struct RepoSnapshot: Codable, Sendable, Hashable {
         checkedAt = try c.decode(Date.self, forKey: .checkedAt)
         // `try?` on every field with a synthesized enum inside it: an unknown case would
         // otherwise throw, and RepoPersistence answers a throw by moving the entire file
-        // aside — losing every repository's seen/notified ledger over one stale field.
+        // aside, losing every repository's seen/notified ledger over one stale field.
         head = (try? c.decodeIfPresent(HeadState.self, forKey: .head)) ?? nil
         upstream = (try? c.decodeIfPresent(WatchedRef.self, forKey: .upstream)) ?? nil
         watched = (try? c.decodeIfPresent(WatchedRef.self, forKey: .watched)) ?? nil
@@ -345,7 +345,7 @@ public struct RepoState: Codable, Sendable, Hashable {
     /// Keyed by remote name: a repository with `origin` and `upstream` must not serve one's
     /// web URL for the other after a remoteOverride change.
     public var cachedRemoteURL: [String: CachedValue<String>] = [:]
-    /// Whether the repository sets core.sshCommand — one process per check before it was cached.
+    /// Whether the repository sets core.sshCommand: one process per check before it was cached.
     public var cachedHasSSHCommand: CachedValue<Bool>?
     public var lastSnapshot: RepoSnapshot?
     public var lastAttemptAt: Date?

@@ -274,7 +274,7 @@ struct RepoCheckerTests {
         try await fx.push(in: b, "release")
         let second = await fx.check(record, state: first.state)
         #expect(second.snapshot.unseenCount == 1)
-        // The list is what HEAD does not have — the behind count — whichever setting chose the ref;
+        // The list is what HEAD does not have, the behind count, whichever setting chose the ref;
         // only the commit that arrived since the last check is marked new.
         #expect(second.snapshot.comparison?.behind == 2)
         #expect(second.snapshot.incoming.map(\.subject) == ["release 2", "release 1"])

@@ -8,7 +8,7 @@ public struct RemoteURL: Sendable, Hashable {
     /// Lowercased host with well-known SSH aliases resolved (e.g. ssh.github.com → github.com).
     public var host: String
     public var port: Int?
-    /// "owner/repo" — no leading slash, no trailing slash or ".git".
+    /// "owner/repo", with no leading slash, no trailing slash and no ".git".
     public var path: String
 
     public init(scheme: Scheme, host: String, port: Int? = nil, path: String) {
@@ -42,7 +42,7 @@ public struct RemoteURL: Sendable, Hashable {
             return RemoteURL(scheme: .local, host: "", path: normalize(text))
         }
 
-        // scp-like: [user@]host:path — the first ':' must come before any '/'.
+        // scp-like: [user@]host:path, where the first ':' must come before any '/'.
         if let colon = text.firstIndex(of: ":") {
             let slash = text.firstIndex(of: "/")
             if slash == nil || colon < slash! {
@@ -168,7 +168,7 @@ extension WebRemote {
     }
 
     /// The "open a pull request from this branch" form. Offered only where the form fills
-    /// the target branch in by itself — the others would need a base branch that FetchBar
+    /// the target branch in by itself; the others would need a base branch that FetchBar
     /// does not reliably know (the watched ref is not always the repository's default).
     public func newPullRequestURL(branch: String) -> URL? {
         guard !branch.isEmpty else { return nil }

@@ -75,7 +75,7 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         let branch = snapshot.watched?.key ?? "remote"
         content.subtitle = "\(count) new \(count == 1 ? "commit" : "commits") on \(branch)"
         if let first = snapshot.incoming.first(where: \.isNew) ?? snapshot.incoming.first {
-            content.body = "\(first.subject) — \(first.authorName)"
+            content.body = "\(first.subject) · \(first.authorName)"
         }
         content.categoryIdentifier = Self.category
         content.threadIdentifier = record.id.uuidString

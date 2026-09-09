@@ -105,7 +105,7 @@ struct ProcessRunnerTests {
         #expect(elapsed < .milliseconds(2900), "took \(elapsed)")
     }
 
-    /// The watchdog used to be cancelled only at function exit — after the drain — so a fetch
+    /// The watchdog used to be cancelled only at function exit, after the drain, so a fetch
     /// that finished at 89.9 s of a 90 s timeout was still reported as timed out, turning a
     /// successful update into an error plus network backoff.
     @Test func aProcessThatFinishesInTimeIsNotReportedAsTimedOut() async throws {
