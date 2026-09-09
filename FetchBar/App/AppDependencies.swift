@@ -97,6 +97,7 @@ final class AppDependencies {
 
     func start() {
         model.start()
+        registerLoginItemOnFirstRun()
         model.scanWatchedFolders(force: true)
         triggers.start()
         observeMenuBarState()
@@ -105,6 +106,26 @@ final class AppDependencies {
         observeUpdateState()
         updates.start()
         Log.ui.notice("FetchBar started")
+    }
+
+    /// Starts at login out of the box. The app only checks while it runs, so a copy that does
+    /// not come back after a restart is a copy that quietly stopped working, and the dots go
+    /// stale without saying so. macOS announces the new login item itself, and Settings turns
+    /// it off in one click.
+    ///
+    /// Once only, so turning it off stays off. Never from a disk image or a translocated copy:
+    /// the path registered there is gone by the next boot, which would leave a broken entry in
+    /// Login Items that is far harder to explain than the one we skipped.
+    private func registerLoginItemOnFirstRun() {
+        guard !settings.didOfferLoginItem else { return }
+        settings.didOfferLoginItem = true
+        let path = Bundle.main.bundleURL.path
+        guard !path.hasPrefix("/Volumes/"), !path.contains("/AppTranslocation/") else {
+            Log.ui.notice("skipped the first-run login item: running from \(path, privacy: .public)")
+            return
+        }
+        loginItem.register()
+        Log.ui.notice("registered the login item on first run")
     }
 
     /// Mirrors "update available" into the status item menu and clears the notification when handled.

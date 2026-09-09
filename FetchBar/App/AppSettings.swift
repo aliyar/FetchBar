@@ -28,6 +28,9 @@ final class AppSettings {
     /// usually sits inside a project folder rather than loose in the folder you watch.
     var watchedFolderDepth: Int { didSet { set(watchedFolderDepth, "watchedFolderDepth") } }
     var markSeenOnExpand: Bool { didSet { set(markSeenOnExpand, "markSeenOnExpand") } }
+    /// Bookkeeping, not a preference: set the first time the app puts itself in Login Items,
+    /// so that switching it off in Settings is not undone on the next launch.
+    var didOfferLoginItem: Bool { didSet { set(didOfferLoginItem, "didOfferLoginItem") } }
     var defaultOpenAppBundleID: String { didSet { set(defaultOpenAppBundleID, "defaultOpenAppBundleID") } }
     var customOpenAppBundleIDs: [String] { didSet { set(customOpenAppBundleIDs, "customOpenAppBundleIDs") } }
     var appearance: AppAppearance { didSet { set(appearance.rawValue, "appearance") } }
@@ -79,6 +82,14 @@ final class AppSettings {
         watchedFolders = defaults.stringArray(forKey: "watchedFolders") ?? []
         watchedFolderDepth = defaults.object(forKey: "watchedFolderDepth") as? Int ?? 2
         markSeenOnExpand = defaults.object(forKey: "markSeenOnExpand") as? Bool ?? false
+        // Absent means one of two very different things. On a fresh install nothing of ours is
+        // on disk yet and the app may put itself in Login Items; on a copy that predates this
+        // key there are settings already, and flipping a system setting under someone who left
+        // it alone is not ours to do. Anything of our own on disk counts as the second.
+        didOfferLoginItem = defaults.object(forKey: "didOfferLoginItem") as? Bool
+            ?? (defaults.object(forKey: "checkIntervalSeconds") != nil
+                || defaults.object(forKey: "panelShortcutKeyCode") != nil
+                || defaults.stringArray(forKey: "watchedFolders") != nil)
         defaultOpenAppBundleID = defaults.string(forKey: "defaultOpenAppBundleID") ?? ExternalApp.finder.id
         customOpenAppBundleIDs = defaults.stringArray(forKey: "customOpenAppBundleIDs") ?? []
         appearance = AppAppearance(rawValue: defaults.string(forKey: "appearance") ?? "") ?? .system
