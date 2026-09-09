@@ -941,7 +941,7 @@ h3 {
   .row--flip .row-media { order: 1; }
   .promises { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s10); }
   .promises li:nth-last-child(2) { border-bottom: 1px solid rgba(255,255,255,.10); }
-  .foot-grid { grid-template-columns: 1.4fr 1fr 1fr 1.4fr; }
+  .foot-grid { grid-template-columns: 1.6fr 1fr 1fr; }
   .shot--panel img { width: 352px; }
 }
 

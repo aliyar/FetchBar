@@ -62,6 +62,8 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://github.com/aliyar/fetchbar/releases/latest" }
 }
 </script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9FSWBSMGE6"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -268,7 +270,7 @@
       <p class="lead">FetchBar watches your local clones and puts one colored dot per repository in the menu bar. Filled means the remote is ahead of you. Click to read the incoming commits and fast-forward, without opening a terminal.</p>
 
       <div class="cta">
-        <a class="btn btn--lg" href="https://github.com/aliyar/fetchbar/releases/download/v0.4.1/FetchBar-0.4.1.zip">Download for macOS</a>
+        <a class="btn btn--lg" data-download="hero" href="https://github.com/aliyar/fetchbar/releases/download/v0.4.1/FetchBar-0.4.1.zip">Download for macOS</a>
         <a class="btn btn--ghost btn--lg" href="https://github.com/aliyar/fetchbar" target="_blank" rel="noopener">Source on GitHub</a>
       </div>
       <ul class="req" aria-label="Requirements">
@@ -426,7 +428,7 @@
         <li><b>It never asks you for credentials.</b> Checks run with <span class="mono">GIT_TERMINAL_PROMPT=0</span> and a non-interactive SSH setup, using the same keys, agent and credential helpers your terminal already uses.</li>
         <li><b>It gives up quickly.</b> Every command has a hard timeout, authentication failures back off exponentially instead of retrying into a lockout, and one broken repository never slows the others down.</li>
         <li><b>It knows when to stop.</b> Checks pause when you are offline or in Low Power Mode and resume after your Mac wakes. Worktrees that share a <span class="mono">.git</span> directory are never fetched at the same time.</li>
-        <li><b>Nothing leaves your Mac.</b> No backend, no account, no telemetry, no analytics, no crash reporter. This page doesn’t have any either.</li>
+        <li><b>Nothing leaves your Mac.</b> No backend, no account, no telemetry, no analytics, no crash reporter.</li>
         <li><b>You can check all of it.</b> MIT licensed, and the whole check pipeline is one file called <span class="mono">RepoChecker.swift</span>.</li>
       </ul>
     </div>
@@ -438,7 +440,7 @@
       <h2>Three steps and it is in your menu bar.</h2>
 
       <div class="dl">
-        <a class="btn btn--lg" href="https://github.com/aliyar/fetchbar/releases/download/v0.4.1/FetchBar-0.4.1.zip">Download FetchBar</a>
+        <a class="btn btn--lg" data-download="end" href="https://github.com/aliyar/fetchbar/releases/download/v0.4.1/FetchBar-0.4.1.zip">Download FetchBar</a>
         <p class="dl-meta">3.9 MB · Universal (Apple Silicon and Intel) · macOS 14 or later</p>
         <p class="dl-sha">SHA-256 <span class="mono">06d31ac410945c75e7759aa958b47d1fbb61c9acae329a42570d73ae515464eb</span></p>
       </div>
@@ -510,10 +512,6 @@
           <li><a href="/license/">License</a></li>
         </ul>
       </nav>
-      <div>
-        <p class="foot-head">This page</p>
-        <p class="foot-note">No analytics, no cookies, no third-party requests. Three files, hand-written.</p>
-      </div>
     </div>
     <p class="foot-legal">FetchBar is not affiliated with Apple, GitHub, GitLab or Atlassian. macOS is a trademark of Apple Inc.</p>
   </div>

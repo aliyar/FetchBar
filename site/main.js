@@ -1,5 +1,28 @@
 /* FetchBar site — the menu bar demo, scroll reveals and the copy button.
    No dependencies, no inline styles (the host sends script-src 'self'; style-src 'self'). */
+
+/* Google Analytics, configured here rather than in a <script> block on the page: the host
+   allows googletagmanager.com as a source but no inline script, and the tag itself is
+   loaded from the page's head. What it collects is on the privacy page. */
+(function () {
+  "use strict";
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag("js", new Date());
+  window.gtag("config", "G-9FSWBSMGE6");
+
+  /* A click is the nearest thing a static site has to a download. Every link to the file
+     carries data-download with where it sits, so the buttons can be told apart; the version
+     and the file name come out of the address, so they are never a copy that goes stale. */
+  document.addEventListener("click", function (event) {
+    var link = event.target instanceof Element ? event.target.closest("a[data-download]") : null;
+    if (!link) { return; }
+    var file = link.getAttribute("href").split("/").pop();
+    var version = (link.getAttribute("href").match(/\/v([0-9]+\.[0-9]+\.[0-9]+)\//) || [])[1];
+    window.gtag("event", "download", { version: version, where: link.getAttribute("data-download"), file: file });
+  });
+}());
+
 (function () {
   "use strict";
   var root = document.documentElement;
