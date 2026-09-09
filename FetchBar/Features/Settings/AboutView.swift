@@ -53,8 +53,8 @@ struct AboutView: View {
 
             HStack(spacing: 16) {
                 Link("Website", destination: URL(string: "https://fetchbar.greatpixels.com")!)
-                Link("GitHub", destination: URL(string: "https://github.com/aliyar/fetchbar")!)
-                Link("Report an Issue", destination: URL(string: "https://github.com/aliyar/fetchbar/issues")!)
+                Link("GitHub", destination: URL(string: "https://github.com/aliyar/FetchBar")!)
+                Link("Report an Issue", destination: URL(string: "https://github.com/aliyar/FetchBar/issues")!)
             }
             .font(.callout)
             Text("Tip: right-click the menu bar icon for quick actions.")

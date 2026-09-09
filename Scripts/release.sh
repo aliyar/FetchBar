@@ -12,7 +12,7 @@
 #   --adhoc        Force ad-hoc signing even if a Developer ID certificate is installed.
 #
 # Environment:
-#   REPO            GitHub slug (default: aliyar/fetchbar)
+#   REPO            GitHub slug (default: aliyar/FetchBar)
 #   NOTARY_PROFILE  notarytool keychain profile; notarization runs only with Developer ID signing.
 #
 # Prerequisites: xcodegen, gh (logged in), Xcode, the Sparkle EdDSA key in the keychain
@@ -39,7 +39,7 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "usage: $0 <major.minor.patch> [--notes FILE] [--dry-run] [--no-git] [--draft] [--prerelease] [--adhoc]" >&2
   exit 2
 fi
-REPO="${REPO:-aliyar/fetchbar}"
+REPO="${REPO:-aliyar/FetchBar}"
 TAG="v$VERSION"
 APP_NAME="FetchBar"
 DIST="dist"

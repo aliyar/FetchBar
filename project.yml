@@ -67,7 +67,7 @@ targets:
         NSRemovableVolumesUsageDescription: "FetchBar reads git repositories you add on external drives."
         NSNetworkVolumesUsageDescription: "FetchBar reads git repositories you add on network volumes."
         # Sparkle auto-update: feed is attached to every GitHub release as an asset.
-        SUFeedURL: "https://github.com/aliyar/fetchbar/releases/latest/download/appcast.xml"
+        SUFeedURL: "https://github.com/aliyar/FetchBar/releases/latest/download/appcast.xml"
         SUPublicEDKey: "p+uMYPdgR+8fYhuFBDXI5szEujxRNNDCcYhrQgphrW0="
         SUEnableAutomaticChecks: true
         SUScheduledCheckInterval: 86400

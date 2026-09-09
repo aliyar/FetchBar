@@ -130,7 +130,7 @@ concurrently. Everything stays on your Mac: FetchBar has no backend, no telemetr
 
 ## Install
 
-1. Download `FetchBar-<version>.zip` from the [latest release](https://github.com/aliyar/fetchbar/releases/latest)
+1. Download `FetchBar-<version>.zip` from the [latest release](https://github.com/aliyar/FetchBar/releases/latest)
    and unzip it.
 2. Drag `FetchBar.app` to `/Applications` and open it. FetchBar lives in the menu bar — there is no Dock icon.
 
@@ -144,7 +144,7 @@ Command Line Tools. FetchBar finds it automatically and never triggers the "inst
 
 ```sh
 brew install xcodegen    # once
-git clone git@github.com:aliyar/fetchbar.git && cd fetchbar
+git clone git@github.com:aliyar/FetchBar.git && cd FetchBar
 make run                 # generate the Xcode project, build Debug, launch
 make test                # engine tests (swift test) + app tests (xcodebuild)
 make open                # open the generated project in Xcode
@@ -171,7 +171,7 @@ make release-dry VERSION=1.2.3      # build dist/ only, no git or GitHub
 notarized — it falls back to ad-hoc signing when no certificate is installed), zips it with `install.txt`,
 signs the archive with the Sparkle EdDSA key, writes `appcast.xml`, commits and tags `vX.Y.Z`, pushes, and publishes a
 GitHub release with the zip, `install.txt` and `appcast.xml`. Running apps pick the update up from
-`https://github.com/aliyar/fetchbar/releases/latest/download/appcast.xml`.
+`https://github.com/aliyar/FetchBar/releases/latest/download/appcast.xml`.
 
 The EdDSA private key lives in the login keychain (created once with Sparkle's `generate_keys`; the public half
 is `SUPublicEDKey` in `project.yml`). Back it up with `generate_keys -x <file>` and keep it out of the repository.

@@ -11,7 +11,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-VERSION="${1:-}"; ZIP="${2:-}"; REPO="${3:-aliyar/fetchbar}"
+VERSION="${1:-}"; ZIP="${2:-}"; REPO="${3:-aliyar/FetchBar}"
 PAGE="site/index.html"
 MAP="site/sitemap.xml"
 
