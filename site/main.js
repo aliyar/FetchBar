@@ -14,7 +14,7 @@
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
   window.gtag("js", new Date());
-  window.gtag("config", "G-LTZCPHH34W");
+  window.gtag("config", "G-CWLEBVQMJ1");
 
   /* A click is the nearest thing a static site has to a download. Every link to the file
      carries data-download with where it sits, so the buttons can be told apart; the version
