@@ -180,7 +180,12 @@ final class AppModel {
 
     // MARK: - Actions
 
+    /// Looks for new clones as well as checking the known ones. The scan's throttle is there
+    /// for the automatic pass on every panel open; it has no business standing in front of
+    /// someone who pressed refresh, who would otherwise sit out five minutes waiting for a
+    /// clone that sits in a folder the app is watching.
     func refreshAll() {
+        scanWatchedFolders(force: true)
         Task { await engine.trigger(.manualAll) }
     }
 
