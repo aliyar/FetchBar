@@ -117,13 +117,22 @@ final class AppDependencies {
     /// the path registered there is gone by the next boot, which would leave a broken entry in
     /// Login Items that is far harder to explain than the one we skipped.
     private func registerLoginItemOnFirstRun() {
-        guard !settings.didOfferLoginItem else { return }
-        settings.didOfferLoginItem = true
+        // A disk image or a translocated copy is somewhere the app is only passing through, and
+        // the path registered from there is gone by the next boot. Leave without spending the
+        // one chance, so the copy that lands in Applications still gets the default.
         let path = Bundle.main.bundleURL.path
         guard !path.hasPrefix("/Volumes/"), !path.contains("/AppTranslocation/") else {
-            Log.ui.notice("skipped the first-run login item: running from \(path, privacy: .public)")
+            Log.ui.notice("not registering a login item from \(path, privacy: .public)")
             return
         }
+        guard !settings.didOfferLoginItem else { return }
+        settings.didOfferLoginItem = true
+        // `status` starts at .notRegistered and only a refresh makes it true. Already enabled
+        // means there is nothing to do; approval pending means someone switched it off in
+        // System Settings, and registering again neither works nor takes the hint. Both are
+        // settled answers, so the chance is spent either way.
+        loginItem.refresh()
+        guard !loginItem.isEnabled, !loginItem.requiresApproval else { return }
         loginItem.register()
         Log.ui.notice("registered the login item on first run")
     }
