@@ -236,6 +236,26 @@ step "Pointing the landing page at $TAG"
 Scripts/site-build.py --check >/dev/null || die "site pages are out of date with their partials. Run: make site-build"
 Scripts/site-version.sh "$VERSION" "$REPO"
 
+# ---------- release notes ----------
+# GitHub's --generate-notes builds its list out of merged pull requests, and this repository
+# commits straight to main, so it hands back nothing but the compare link. Sparkle shows these
+# notes in its update dialog, and an empty body is an update nobody can judge. Fall back to the
+# commit subjects since the previous tag; the release commit itself is not news.
+if [[ -z "$NOTES_FILE" ]]; then
+  PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+  mkdir -p "$DIST"
+  NOTES_FILE="$DIST/notes.md"
+  : > "$NOTES_FILE"
+  if [[ -n "$PREV_TAG" ]]; then
+    git log --no-merges --pretty='- %s' "$PREV_TAG..HEAD" > "$DIST/.subjects" || true
+    grep -v '^- Release [0-9]' "$DIST/.subjects" > "$NOTES_FILE" || true
+    rm -f "$DIST/.subjects"
+  fi
+  [[ -s "$NOTES_FILE" ]] || echo "- Maintenance release." > "$NOTES_FILE"
+  [[ -n "$PREV_TAG" ]] && printf '\n**Full Changelog**: https://github.com/%s/compare/%s...%s\n' \
+    "$REPO" "$PREV_TAG" "$TAG" >> "$NOTES_FILE"
+fi
+
 # ---------- release notes → HTML for the appcast ----------
 notes_to_html() {  # markdown-ish file in $1 → simple HTML on stdout
   python3 - "$1" <<'PY'
@@ -328,16 +348,7 @@ step "Creating GitHub release $TAG"
 GH_ARGS=(--repo "$REPO" --title "$APP_NAME $VERSION")
 [[ $DRAFT -eq 1 ]] && GH_ARGS+=(--draft)
 [[ $PRERELEASE -eq 1 ]] && GH_ARGS+=(--prerelease)
-if [[ -n "$NOTES_FILE" ]]; then
-  gh release create "$TAG" "$DMG" "$ZIP" "$DIST/appcast.xml" "${GH_ARGS[@]}" --notes-file "$NOTES_FILE"
-else
-  gh release create "$TAG" "$DMG" "$ZIP" "${GH_ARGS[@]}" --generate-notes
-  step "Generating Sparkle appcast from the release notes"
-  gh release view "$TAG" --repo "$REPO" --json body --jq .body > "$DIST/.notes.md"
-  make_appcast "$DIST/.notes.md"
-  rm -f "$DIST/.notes.md"
-  gh release upload "$TAG" "$DIST/appcast.xml" --repo "$REPO" --clobber
-fi
+gh release create "$TAG" "$DMG" "$ZIP" "$DIST/appcast.xml" "${GH_ARGS[@]}" --notes-file "$NOTES_FILE"
 
 step "Done"
 echo "  https://github.com/$REPO/releases/tag/$TAG"
