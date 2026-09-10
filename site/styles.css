@@ -529,7 +529,7 @@ html:not(.js) #fb-trigger { pointer-events: none; }
 .fb-dropdown button.is-current { font-weight: 500; }
 
 .fb-dropdown button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.fb-note { font-size: 11px; color: var(--fb-text-3); }
+.fb-note { flex-basis: 100%; font-size: 11px; color: var(--fb-text-2); }
 
 .fb-plus { width: 13px; height: 13px; margin-right: 5px; }
 .fb-foot {

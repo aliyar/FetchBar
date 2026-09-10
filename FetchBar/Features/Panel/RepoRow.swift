@@ -230,21 +230,32 @@ struct RepoRow: View {
     }
 
     private var actionRow: some View {
-        HStack(spacing: 8) {
-            let reason = pullDisabledReason
-            Button("Pull") { model.pull(item.id) { collapse() } }
-                .disabled(reason != nil)
-                .help(reason ?? "Fast-forward the current branch (no merge commits)")
-            if item.unseen > 0 {
-                Button("Mark as seen") {
-                    model.markSeen(item.id)
-                    collapse()
+        let reason = pullDisabledReason
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                Button("Pull") { model.pull(item.id) { collapse() } }
+                    .disabled(reason != nil)
+                    .help(reason ?? "Fast-forward the current branch (no merge commits)")
+                if item.unseen > 0 {
+                    Button("Mark as seen") {
+                        model.markSeen(item.id)
+                        collapse()
+                    }
                 }
+                Spacer()
+                openMenu
             }
-            Spacer()
-            openMenu
+            .controlSize(.small)
+            // A greyed-out Pull with its reason only in the tooltip reads as broken: nobody
+            // hovers. Say why, but only where Pull was expected, that is with commits
+            // waiting; "Already up to date" under every quiet repository would be noise.
+            if let reason, item.behind > 0 {
+                Text(reason)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
-        .controlSize(.small)
         .padding(.horizontal, 10)
         .padding(.top, 2)
     }
