@@ -137,8 +137,9 @@ struct SilenceLabelTests {
     }
 
     @Test func todayShowsOnlyTheTime() {
-        let now = Date()
-        let later = now.addingTimeInterval(1800)
+        // Noon, not now: after half past eleven at night, half an hour later is tomorrow.
+        let noon = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+        let later = noon.addingTimeInterval(1800)
         let label = AppModel.untilLabel(later, calendar: .current)
         #expect(!label.contains("tomorrow"))
         #expect(label == later.formatted(date: .omitted, time: .shortened))
