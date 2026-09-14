@@ -2,6 +2,71 @@ import AppKit
 import SwiftUI
 import OSLog
 
+/// A pane over the item's button that takes a drop.
+///
+/// The button is the system's and cannot be given dragged types of its own, so this sits
+/// over it: transparent, invisible to the pointer (`hitTest` answers nil, so clicks go
+/// through), and awake only while something is being dragged.
+private final class DropCatcher: NSView {
+    private let accept: ([URL]) -> Bool
+    private let over: (Bool) -> Void
+    private var isReceiving = false {
+        didSet { if isReceiving != oldValue { needsDisplay = true } }
+    }
+
+    init(frame: NSRect, over: @escaping (Bool) -> Void, accept: @escaping ([URL]) -> Bool) {
+        self.over = over
+        self.accept = accept
+        super.init(frame: frame)
+        autoresizingMask = [.width, .height]
+        registerForDraggedTypes([.fileURL])
+    }
+
+    required init?(coder: NSCoder) { nil }
+
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+    /// Folders only: a repository is a folder, and a file dragged past the icon is not
+    /// something FetchBar could watch.
+    private func folders(in dragging: NSDraggingInfo) -> [URL] {
+        let options: [NSPasteboard.ReadingOptionKey: Any] = [.urlReadingFileURLsOnly: true]
+        let urls = dragging.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: options) as? [URL] ?? []
+        return urls.filter { (try? $0.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true }
+    }
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        guard !folders(in: sender).isEmpty else { return [] }
+        isReceiving = true
+        over(true)
+        return .copy
+    }
+
+    override func draggingExited(_ sender: NSDraggingInfo?) {
+        isReceiving = false
+        over(false)
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        isReceiving = false
+        let found = folders(in: sender)
+        guard !found.isEmpty else {
+            over(false)
+            return false
+        }
+        return accept(found)
+    }
+
+    /// A ring while something is over it, since the item cannot highlight itself for a
+    /// drag the way it does for a click.
+    override func draw(_ dirtyRect: NSRect) {
+        guard isReceiving else { return }
+        NSColor.controlAccentColor.withAlphaComponent(0.9).setStroke()
+        let ring = NSBezierPath(roundedRect: bounds.insetBy(dx: 1, dy: 3), xRadius: 4, yRadius: 4)
+        ring.lineWidth = 2
+        ring.stroke()
+    }
+}
+
 /// Owns the `NSStatusItem` and the `NSPopover` that hosts the SwiftUI panel.
 /// All public API is main-actor; AppKit callbacks hop back onto the main actor explicitly.
 final class StatusItemController: NSObject, NSPopoverDelegate {
@@ -21,17 +86,29 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     var onPanelOpened: (() -> Void)?
     var onPanelClosed: (() -> Void)?
     var onInstallUpdate: (() -> Void)?
+    /// Folders dropped on the item. Answers whether they were taken.
+    var onDrop: (([URL]) -> Bool)?
+    /// A folder is being dragged over the item, or has left it again. Dropping onto a menu
+    /// bar icon is a gesture with no affordance, so the app gets the chance to say the icon
+    /// will take it.
+    var onDragOver: ((Bool) -> Void)?
     /// Version string of an available app update (adds an item to the context menu).
     var updateAvailableVersion: String?
     /// nil → follow the system. Applied to the popover only, so the status item glyph
     /// keeps matching the menu bar rather than the app's chosen theme.
     var appearance: NSAppearance? {
-        didSet { popover.appearance = appearance }
+        didSet {
+            popover.appearance = appearance
+            dropPanel?.appearance = appearance
+        }
     }
 
     // MARK: Private
     private var statusItem: NSStatusItem?
     private let popover = NSPopover()
+    /// The drop panel, which hangs off the same button and is held to the same rule: the
+    /// image waits while it is up, or the dots changing under a drop would close it.
+    private var dropPanel: NSPopover?
     private let renderer = StatusItemRenderer()
     private var appearanceObservation: NSKeyValueObservation?
     private var lastRendered: (layout: StatusItemLayout, dark: Bool, scale: CGFloat)?
@@ -58,6 +135,12 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
             appearanceObservation = button.observe(\.effectiveAppearance, options: [.new]) { [weak self] _, _ in
                 Task { @MainActor in self?.render() }
             }
+            let catcher = DropCatcher(frame: button.bounds) { [weak self] isOver in
+                self?.onDragOver?(isOver)
+            } accept: { [weak self] urls in
+                self?.onDrop?(urls) ?? false
+            }
+            button.addSubview(catcher)
         }
 
         popover.behavior = .transient
@@ -76,6 +159,10 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     /// changes (e.g. "checking") never touch the image at all.
     func render() {
         guard let button = statusItem?.button else { return }
+        if popover.isShown || dropPanel?.isShown == true {
+            renderPending = true
+            return
+        }
         if button.toolTip != state.summary {
             button.toolTip = state.summary
             button.setAccessibilityLabel(state.summary)
@@ -84,10 +171,6 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
         let scale = button.window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
         let dark = button.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
         if let last = lastRendered, last.layout == layout, last.dark == dark, last.scale == scale { return }
-        if popover.isShown {
-            renderPending = true
-            return
-        }
         let image = renderer.image(for: layout, appearance: button.effectiveAppearance, scale: scale)
         button.image = image
         lastRendered = (layout, dark, scale)
@@ -112,6 +195,7 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
 
     func showPopover() {
         guard let button = statusItem?.button, !popover.isShown else { return }
+        closeDropPanel()
         AppActivation.activate()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
@@ -132,11 +216,53 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     }
 
     func popoverDidClose(_ notification: Notification) {
+        guard (notification.object as? NSPopover) === popover else {
+            if renderPending { render() }
+            return
+        }
         Log.statusItem.debug("popover closed")
         statusItem?.button?.highlight(false)
         removeMonitors()
         onPanelClosed?()
         if renderPending { render() }
+    }
+
+    // MARK: Drop panel
+
+    var isDropPanelShown: Bool { dropPanel?.isShown == true }
+
+    /// Shows the drop panel under the item, building it on first use. `makeKey` lets its
+    /// buttons answer to Return and Escape once the drop has landed.
+    func showDropPanel(makeKey: Bool, content: () -> AnyView) {
+        guard let button = statusItem?.button else { return }
+        closePopover()
+        let panel = dropPanel ?? makeDropPanel(content())
+        dropPanel = panel
+        if !panel.isShown {
+            panel.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        }
+        if makeKey {
+            AppActivation.activate()
+            panel.contentViewController?.view.window?.makeKey()
+        }
+    }
+
+    func closeDropPanel() {
+        guard let dropPanel, dropPanel.isShown else { return }
+        dropPanel.performClose(nil)
+    }
+
+    private func makeDropPanel(_ root: AnyView) -> NSPopover {
+        let panel = NSPopover()
+        // Transient: clicking away is a way out, and nothing is lost by leaving.
+        panel.behavior = .transient
+        panel.animates = false
+        panel.appearance = appearance
+        panel.delegate = self
+        let host = NSHostingController(rootView: root)
+        host.sizingOptions = [.preferredContentSize]
+        panel.contentViewController = host
+        return panel
     }
 
     private func installMonitors() {

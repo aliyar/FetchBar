@@ -18,6 +18,8 @@ final class AppDependencies {
     let updates: UpdateController
     let settingsWindow: SettingsWindowController
     let panelUI = PanelUIState()
+    /// What the menu bar icon says while folders are dragged onto it.
+    let dropInbox = DropInbox()
     private var observationTask: Task<Void, Never>?
 
     private init() {
@@ -68,6 +70,8 @@ final class AppDependencies {
             panelUI.selected = nil
             model.panelDidOpen()
         }
+        statusItem.onDragOver = { [weak self] isOver in self?.dragOverStatusItem(isOver) }
+        statusItem.onDrop = { [weak self] urls in self?.acceptDrop(urls) ?? false }
         settings.onPanelShortcutChange = { [weak self] in self?.applyPanelShortcut() }
 
         model.closePanel = { statusItem.closePopover() }
@@ -146,6 +150,78 @@ final class AppDependencies {
         }
         statusItem.updateAvailableVersion = version
         if version == nil { notifications.clearUpdateNotification() }
+    }
+
+    // MARK: Dropping folders on the menu bar icon
+
+    /// A folder dragged over the icon is invited; one that leaves again takes the invitation
+    /// with it, while a question that is being answered stays whatever the pointer does.
+    private func dragOverStatusItem(_ isOver: Bool) {
+        if isOver {
+            dropInbox.invite()
+            showDropPanel(makeKey: false)
+        } else if dropInbox.state == .inviting {
+            statusItem.closeDropPanel()
+        }
+    }
+
+    /// Folders dropped on the icon, or on the drop panel once it is up. Taken at once and
+    /// looked into afterwards, because discovery walks the disk and the drag has to be
+    /// answered now.
+    private func acceptDrop(_ urls: [URL]) -> Bool {
+        let folders = urls.filter { (try? $0.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true }
+        guard !folders.isEmpty else {
+            if dropInbox.state == .inviting { statusItem.closeDropPanel() }
+            return false
+        }
+        let model = model, inbox = dropInbox
+        Task { [weak self] in
+            let found = await model.repositories(inDropped: folders)
+            inbox.ask(found.repositories, alreadyAdded: found.alreadyAdded,
+                      droppedFolder: folders.count == 1 ? folders[0].lastPathComponent : nil)
+            Log.ui.notice("\(folders.count, privacy: .public) folders dropped on the icon, \(found.repositories.count, privacy: .public) repositories")
+            self?.showDropPanel(makeKey: true)
+            if case .finished = inbox.state { self?.closeDropPanelSoon() }
+        }
+        return true
+    }
+
+    private func showDropPanel(makeKey: Bool) {
+        let inbox = dropInbox, model = model
+        statusItem.showDropPanel(makeKey: makeKey) {
+            AnyView(DropInboxView(inbox: inbox) { [weak self] in
+                self?.addDroppedRepositories()
+            } onCancel: { [weak self] in
+                inbox.cancel()
+                self?.statusItem.closeDropPanel()
+            } onDrop: { [weak self] urls in
+                self?.acceptDrop(urls) ?? false
+            }
+            .environment(model))
+        }
+    }
+
+    private func addDroppedRepositories() {
+        let urls = dropInbox.beginAdding()
+        guard !urls.isEmpty else { return }
+        let model = model, inbox = dropInbox
+        Task { [weak self] in
+            let result = await model.addRepositoriesReporting(urls)
+            inbox.finish(added: result.added, failure: result.failure)
+            Log.ui.notice("added \(result.added, privacy: .public) repositories from a drop")
+            self?.closeDropPanelSoon()
+        }
+    }
+
+    /// Long enough to be read, short enough not to be in the way. A new drag in the meantime
+    /// has put something else in the panel, and that stays.
+    private func closeDropPanelSoon() {
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(1.4))
+            guard let self, case .finished = self.dropInbox.state else { return }
+            self.statusItem.closeDropPanel()
+            self.dropInbox.cancel()
+        }
     }
 
     /// (Re-)registers the global shortcut that opens the panel.

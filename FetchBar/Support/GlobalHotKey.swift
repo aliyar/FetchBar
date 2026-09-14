@@ -22,7 +22,8 @@ final class GlobalHotKey {
 
         /// What a fresh install starts with. A system-wide hot key shadows the frontmost
         /// app's own menu shortcut, so this avoids the busy combinations: ⌘R and ⇧⌘R are
-        /// reload everywhere, and ⌥⌘R is taken in terminals. ⌃⌘ is comparatively quiet.
+        /// reload everywhere, ⌥⌘R is taken in terminals, and ⌃⌘F is Enter Full Screen in
+        /// apps that keep the old binding. ⌃⌘R is comparatively quiet.
         static let suggested = Shortcut(
             keyCode: UInt32(kVK_ANSI_R),
             modifiers: NSEvent.ModifierFlags([.control, .command]).rawValue

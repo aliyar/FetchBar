@@ -89,8 +89,8 @@ first, and counts the rest as `+N`.
 - Repositories with new commits come first. Click a row to expand it; right-click for everything else
   (*Check Now*, *Copy Path*, *Copy Repository URL*, the repository's web pages, *Watch Branch…* with the remote's
   real branches, *Color*, *Notifications*, *Remove*).
-- Drop repository folders onto the panel to add them, or drop a folder that *contains* repositories and
-  add them all at once.
+- Drop repository folders onto the menu bar icon or the panel to add them, or drop a folder that *contains*
+  repositories and add them all at once. The icon shows what it found first, so you can leave some out.
 - Keyboard: <kbd>⌃⌘R</kbd> opens the panel from anywhere (configurable), then <kbd>↑</kbd><kbd>↓</kbd> to move,
   <kbd>→</kbd>/<kbd>←</kbd> to expand and collapse, <kbd>↩</kbd> to open the repository. Inside the panel:
   <kbd>⌘R</kbd> refresh, <kbd>⌘O</kbd> add, <kbd>⌘F</kbd> filter, <kbd>⌘,</kbd> settings, <kbd>⌘Q</kbd> quit.

@@ -402,6 +402,41 @@ final class AppModel {
         }
     }
 
+    /// What folders dropped on the menu bar icon come to: each one that is a repository, and
+    /// the repositories inside each one that is not, looking as deep as watched folders do.
+    /// Those already on the list are left out and counted.
+    func repositories(inDropped folders: [URL]) async -> (repositories: [URL], alreadyAdded: Int) {
+        let known = Set(records.map { URL(fileURLWithPath: $0.path).standardizedFileURL.path })
+        var found: [URL] = []
+        for folder in folders {
+            if FileManager.default.fileExists(atPath: folder.appendingPathComponent(".git").path) {
+                found.append(folder)
+            } else {
+                found += await engine.discoverRepositories(in: folder, maxDepth: settings.watchedFolderDepth)
+            }
+        }
+        let fresh = found.filter { !known.contains($0.standardizedFileURL.path) }
+        return (fresh, found.count - fresh.count)
+    }
+
+    /// Adds repositories that are already known to be ones, and says how it went rather than
+    /// showing a toast, for a caller whose answer is not in the panel.
+    func addRepositoriesReporting(_ urls: [URL]) async -> (added: Int, failure: String?) {
+        var added = 0
+        var failure: String?
+        for url in urls {
+            do {
+                _ = try await engine.add(path: url)
+                added += 1
+            } catch let error as EngineError {
+                failure = error.message
+            } catch {
+                failure = error.localizedDescription
+            }
+        }
+        return (added, failure)
+    }
+
     // MARK: - Watched folders
 
     @ObservationIgnored private var lastFolderScan: Date?
