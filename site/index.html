@@ -61,6 +61,21 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://github.com/aliyar/FetchBar/releases/latest" }
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "@id": "https://fetchbar.greatpixels.com/#video",
+  "name": "FetchBar in 65 seconds",
+  "description": "One colored dot per repository in the menu bar, the incoming commits a click away, pull or mark as seen, notifications, a global shortcut, and new clones found on their own.",
+  "thumbnailUrl": "https://fetchbar.greatpixels.com/assets/explainer-poster-1.jpg",
+  "uploadDate": "2026-09-15",
+  "duration": "PT1M5S",
+  "url": "https://youtu.be/mamwSnqMW6Q",
+  "embedUrl": "https://www.youtube-nocookie.com/embed/mamwSnqMW6Q",
+  "about": { "@id": "https://fetchbar.greatpixels.com/#app" }
+}
+</script>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CWLEBVQMJ1"></script>
 </head>
@@ -287,6 +302,19 @@
       </figure>
     </div>
   </section>
+
+  <!-- ── the explainer: the poster is this site's own image; the player loads from
+       youtube-nocookie.com only once it is asked for (main.js, privacy page) ── -->
+  <div class="film" id="video">
+    <div class="col">
+      <a class="film-frame film-poster" href="https://youtu.be/mamwSnqMW6Q" data-video="mamwSnqMW6Q"
+         aria-label="Play the FetchBar video (1:05)">
+        <img src="/assets/explainer-poster-1.jpg" width="1920" height="1080" alt="" loading="lazy" decoding="async">
+        <span class="film-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.4-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6Z"/></svg></span>
+        <span class="film-length" aria-hidden="true">1:05</span>
+      </a>
+    </div>
+  </div>
 
   <!-- ── the dots ─────────────────────────────────────────────────────── -->
   <section id="glance" class="band" data-node="2">

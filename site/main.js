@@ -282,4 +282,32 @@
   }
 
 
+  /* ── 3. the explainer: nothing from YouTube until play is pressed ─────── */
+  /* The poster is a plain link to the video, so it works with scripts off; a click with a
+     modifier opens YouTube as a link would. Otherwise the player takes the poster's place
+     in the same frame, from youtube-nocookie.com (render.yaml allows it as a frame source).
+     YouTube's control bar stays; captions are not forced on, cards are off, and related
+     videos come only from this channel. */
+  var film = document.querySelector("a[data-video]");
+  if (film) {
+    film.addEventListener("click", function (event) {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      event.preventDefault();
+      var id = film.getAttribute("data-video");
+      var player = document.createElement("iframe");
+      player.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0&iv_load_policy=3&cc_load_policy=0&playsinline=1";
+      player.title = "FetchBar in 65 seconds";
+      player.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      player.referrerPolicy = "strict-origin-when-cross-origin";
+      player.allowFullscreen = true;
+      var frame = document.createElement("div");
+      frame.className = "film-frame";
+      frame.appendChild(player);
+      film.parentNode.replaceChild(frame, film);
+      player.focus();
+      if (window.gtag) window.gtag("event", "video_play", { app: "fetchbar", video: id });
+    });
+  }
+
+
 })();

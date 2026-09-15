@@ -709,6 +709,42 @@ h1 {
 .shot--panel { margin: var(--s12) 0 0; }
 .shot--panel img { width: 352px; max-width: 100%; height: auto; box-shadow: none; filter: drop-shadow(0 1px 1px rgba(0,0,0,.06)) drop-shadow(0 12px 22px rgba(0,0,0,.10)) drop-shadow(0 36px 60px rgba(0,0,0,.14)); border-radius: 0; }
 
+/* ── the explainer ─────────────────────────────────────────────────────── */
+/* The video sits between the hero and the dots, as wide as the column. The frame keeps its
+   size from poster to player, so the page does not move when it starts. */
+.film { padding-block: var(--s8) var(--s4); }
+.film-frame {
+  position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden;
+  border-radius: var(--radius-lg); background: #140E26; box-shadow: var(--shadow-frame);
+}
+.film-frame img, .film-frame iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; border: 0; object-fit: cover;
+}
+.film-poster { cursor: pointer; }
+.film-poster img { transition: transform 500ms cubic-bezier(.16, 1, .3, 1); }
+.film-poster:hover img { transform: scale(1.015); }
+.film-play {
+  position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px;
+  display: grid; place-items: center; border-radius: 50%;
+  color: #FFFFFF; background: rgba(255,255,255,.16);
+  -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28), 0 16px 40px rgba(0,0,0,.4);
+  transition: transform 200ms cubic-bezier(.16, 1, .3, 1), background 200ms ease, color 200ms ease;
+}
+.film-play svg { width: 38px; height: 38px; margin-left: 5px; fill: currentColor; }
+.film-poster:hover .film-play, .film-poster:focus-visible .film-play { transform: scale(1.06); background: #3B4CC7; }
+.film-poster:active .film-play { transform: scale(.97); }
+.film-length {
+  position: absolute; right: 16px; bottom: 14px; padding: 3px 9px; border-radius: 7px;
+  background: rgba(10,8,20,.72); color: #FFFFFF; font: 400 13px/1.4 var(--font-mono);
+}
+@media (max-width: 620px) {
+  .film-frame { border-radius: var(--radius); }
+  .film-play { width: 68px; height: 68px; margin: -34px 0 0 -34px; }
+  .film-play svg { width: 28px; height: 28px; margin-left: 4px; }
+  .film-length { right: 10px; bottom: 9px; font-size: 12px; }
+}
+
 /* ── bands ─────────────────────────────────────────────────────────────── */
 .band { padding-block: clamp(64px, 8vw, 112px); }
 .band--alt { background: var(--paper-2); }
